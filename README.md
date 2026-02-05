@@ -1,63 +1,65 @@
 # Discrete Trait Prediction
 
-This repository contains the scripts for "Predicting Discrete Traits in Evolving Systems".
+This repository contains R scripts and Excel result files for "Predicting Discrete Traits in Evolving Systems".
 
 ## Contents
 
-- Discrete_Simulation.*.sh
-    - This shell script calls the others to perform the whole simulation.
-    - This script also runs the phylogenetic analysis through the software BayesTraits.
-    - This holds the primary settings for this simulation.
+- codes_scripts_main_analyses
 
-- DiscreteFunctions.*.R
-    - This R script details all sub-functions used in the next following scripts.
+    - Discrete_Simulation.*.sh
+        - This shell script calls the others to perform the whole simulation.
+        - This script also runs the phylogenetic analysis through the software BayesTraits.
+        - This holds the primary settings for this simulation.
 
-- SetupDirectories.*.R
-    - This script sets up the directories necessary for the simulation to run
+    - DiscreteFunctions.*.R
+        - This R script details all sub-functions used in the next following scripts.
 
-- TreeGeneration.*.R
-    - This script generates the phylogenetic trees used in the simulation
+    - SetupDirectories.*.R
+        - This script sets up the directories necessary for the simulation to run
 
-- FullDataGeneration.*.R
-    - This script geneates the data for every trial in the simulation based on settings in the shell script
+    - TreeGeneration.*.R
+        - This script generates the phylogenetic trees used in the simulation
 
-- SampleSingleTaxa.*.R
-    - This script samples one taxon from each data and records its data to be predicted later
+    - FullDataGeneration.*.R
+        - This script geneates the data for every trial in the simulation based on settings in the shell script
 
-- SampleMultipleTaxa.*.R
-    - This script only runs if multiple_prediction or clade_prediction are "true" in the shell script
-    - It functions the same as SampleSingleTaxa.*.R except it samples a number of taxa equal to the unknown_size setting in the shell script
+    - SampleSingleTaxa.*.R
+        - This script samples one taxon from each data and records its data to be predicted later
 
-- ResultsMatrixGeneration.*.R
-    - This script generates the final results table and fills in the taxon and tree information
+    - SampleMultipleTaxa.*.R
+        - This script only runs if multiple_prediction or clade_prediction are "true" in the shell script
+        - It functions the same as SampleSingleTaxa.*.R except it samples a number of taxa equal to the unknown_size setting in the shell script
 
-- FilesForBayesTraits.*.R
-    - This script generates the input files necessary to run BayesTraits based on the simulated data and settings
+    - ResultsMatrixGeneration.*.R
+        - This script generates the final results table and fills in the taxon and tree information
 
-- BBandNBPrediction.*.R
-    - This script runs the Beta Binomial and Naive Bayes predictions
-    - Results are stored in the main results tables in the Results folder
+    - FilesForBayesTraits.*.R
+        - This script generates the input files necessary to run BayesTraits based on the simulated data and settings
 
-- RunBayesTraits.*.R
-    - This script performs the BayesTraits runs for this simulation
-    - The type of BayesTraits runs are determined in the settings in the shell script
+    - BBandNBPrediction.*.R
+        - This script runs the Beta Binomial and Naive Bayes predictions
+        - Results are stored in the main results tables in the Results folder
 
-- CompileBayesTraits.*.R
-    - This script compiles the results in the log files from BayesTraits
-    - It stores this information in the main results tables in the Results folder
+    - RunBayesTraits.*.R
+        - This script performs the BayesTraits runs for this simulation
+        - The type of BayesTraits runs are determined in the settings in the shell script
 
-- AncestralStateReconstruction.*.R
-    - This state performs Ancestral State Reconstruction on the sister and grandparent nodes of the unknown taxon using models created by BayesTraits
-    - The full results are stored in the "AncestralStateReconstruction" subfolders within the Results folder
-    - Summary stats are pulled from this table into the main results table
+    - CompileBayesTraits.*.R
+        - This script compiles the results in the log files from BayesTraits
+        - It stores this information in the main results tables in the Results folder
 
-- SummarizeResults.*.R
-    - This script summarizes the results into more digestable summary tables
-    - These are stored in the Results folder
+    - AncestralStateReconstruction.*.R
+        - This state performs Ancestral State Reconstruction on the sister and grandparent nodes of the unknown taxon using models created by BayesTraits
+        - The full results are stored in the "AncestralStateReconstruction" subfolders within the Results folder
+        - Summary stats are pulled from this table into the main results table
 
-- RemoveSuperfluousFiles.*.R
-    - This script removes any additional files created in the middle of the simulation to decrease the storage costs of the simulation long term
-    - It removes instruction, schedule, model, and particular data files which are only used as inputs for BayesTraits
+    - SummarizeResults.*.R
+        - This script summarizes the results into more digestable summary tables
+        - These are stored in the Results folder
+
+    - RemoveSuperfluousFiles.*.R
+        - This script removes any additional files created in the middle of the simulation to decrease the storage costs of the simulation long term
+        - It removes instruction, schedule, model, and particular data files which are only used as inputs for BayesTraits
 
 ## System and Program Requirements
 
