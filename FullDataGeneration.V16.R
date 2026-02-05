@@ -47,7 +47,7 @@ VR_tree_scales <- gsub(".*=\\((.*)\\)", "\\1", VR_tree_scales)
 VR_tree_scales <- as.numeric(unlist(strsplit(VR_tree_scales, "\\s+")))
 
 
-### Install and call the necessary 
+### Install and call the necessary
 # First, a list of the packages we need
 required_packages <- c("ape", "phytools")
 
@@ -64,7 +64,7 @@ lapply(required_packages, library, character.only = TRUE)
 
 ### Set the q-matrices that we will use for these runs
 q1 <- generate_qmat(L, L, 1, 1)   # Low, equal rates
-q2 <- generate_qmat(M, M, 1, 1)   # Medium, equal rates  
+q2 <- generate_qmat(M, M, 1, 1)   # Medium, equal rates
 q3 <- generate_qmat(H, H, 1, 1)   # High, equal rates
 q4 <- generate_qmat(M, L, 1, 1)   # Low loss, medium gain
 q5 <- generate_qmat(H, L, 1, 1)   # Low loss, high gain
@@ -76,34 +76,34 @@ q10 <- generate_qmat(L, L, depend_scale2, depend_adj2)  # Low rates, higher depe
 q11 <- generate_qmat(M, M, depend_scale2, depend_adj2)  # Medium rates, higher dependency
 q12 <- generate_qmat(H, H, depend_scale2, depend_adj2)  # High rates, higher dependency
 qRandom <- generate_qmat(L, L, 1, 1) #This is just a placeholder
-    
+
 
 
 ### Generate the data for the main trials
 for (i in 1:trial_amount) {
   treename <- paste0("Trees/Full_tree.", i, ".tre")
   full_tree <- read.nexus(treename)
-  
+
   # Now we need to delve into each type
   for (type in types) {
     # First, set the correct Q-matrix
     if(type == "ER.L") {qmat <- q1}
     if(type == "ER.M") {qmat <- q2}
-    if(type == "ER.H") {qmat <- q3} 
+    if(type == "ER.H") {qmat <- q3}
     if(type == "DR.LM") {qmat <- q4}
     if(type == "DR.LH") {qmat <- q5}
-    if(type == "DR.MH") {qmat <- q6} 
+    if(type == "DR.MH") {qmat <- q6}
     if(type == "DEP1.L") {qmat <- q7}
     if(type == "DEP1.M") {qmat <- q8}
-    if(type == "DEP1.H") {qmat <- q9} 
+    if(type == "DEP1.H") {qmat <- q9}
     if(type == "DEP2.L") {qmat <- q10}
     if(type == "DEP2.M") {qmat <- q11}
     if(type == "DEP2.H") {qmat <- q12}
-    
+
     ### Run the variable rates if necessary
     if (variable_rates == TRUE) {
-      
-      
+
+
       # Run the function that will generate data based on the correct settings
       full_data <- generate_data(full_tree, VR_tree_scales, pop_size, qmat, Random = F)
       colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
@@ -111,38 +111,38 @@ for (i in 1:trial_amount) {
       # Save the data to be used later
       full_data_name <- paste0("VariableRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
       write.table(full_data, full_data_name, quote = F, sep = "\t", row.names = F, col.names = T)
-          
+
       # Do a count of each character state across the tree
       countname <- paste0("VariableRates/", type, "/Data/", type)
       countup(i, full_data, countname)
-      
-      
+
+
     }
     # Reset the tree scales and run equal rates trials
-    
-    
+
+
     # Run the function that will generate data based on the correct settings
     full_data <- generate_data(full_tree, CR_tree_scales, pop_size, qmat, Random = F)
     colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
-    
+
     # Save the data to be used later
     full_data_name <- paste0("ConstantRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
     write.table(full_data, full_data_name, quote = F, sep = "\t", row.names = F, col.names = T)
-    
+
     # Do a count of each character state across the tree
     countname <- paste0("ConstantRates/", type, "/Data/", type)
     countup(i, full_data, countname)
   }
-  
-  
+
+
   ### Finally, run the function that will generate data based on the correct settings
   full_data <- generate_data(full_tree, CR_tree_scales, pop_size, qRandom, Random = T)
   colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
-  
+
   # Save the data to be used later
   full_data_name <- paste0("Random/Data/Random.", i, ".Full_data.txt")
   write.table(full_data, full_data_name, quote = F, sep = "\t", row.names = F, col.names = T)
-  
+
   # Do a count of each character state across the tree
   countup(i, full_data, path_name = "Random/Data/Random")
 }

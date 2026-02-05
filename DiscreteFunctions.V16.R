@@ -24,7 +24,7 @@ generate_qmat <- function(gain, loss, scaler, adjuster) {
   qmat <- matrix(data = c(0, gain*adjuster, gain*scaler, 0,
                           loss*adjuster, 0, 0, gain*adjuster,
                           loss*adjuster, 0, 0, gain*adjuster,
-                          0, loss*adjuster, loss*scaler, 0), 
+                          0, loss*adjuster, loss*scaler, 0),
                           nrow = 4, ncol = 4, byrow = TRUE)
   return(qmat)
 }
@@ -36,14 +36,14 @@ generate_data <- function(full_tree, tree_scales, pop_size, qmat, Random = FALSE
   branch_scales <- sample(tree_scales, branch_count, replace = TRUE)
   sim_tree <- full_tree
   sim_tree$edge.length <- full_tree$edge.length * branch_scales
-  
+
   # Run rTraitDisc with the random root state to create a dataset
-  TempData <- rTraitDisc(sim_tree, model = qmat, 
-                         states = c("00", "01", "10", "11"), 
+  TempData <- rTraitDisc(sim_tree, model = qmat,
+                         states = c("00", "01", "10", "11"),
                          root.value = 1)
   TempMat <- matrix(TempData, nrow = pop_size, ncol = 4)
   colnames(TempMat) <- c("Taxon #", "Trait A", "Trait B", "Class")
-  
+
   # Rework the matrix to make it a little easier to analyze
   for (j in 1:pop_size) {
     if (TempMat[j, 1] == "00") {
@@ -62,7 +62,7 @@ generate_data <- function(full_tree, tree_scales, pop_size, qmat, Random = FALSE
       TempMat[j,2] <- 1
       TempMat[j,3] <- 1
     }
-    
+
     # This is where we can ignore the phylogeny, if we should choose
     if (Random == TRUE) {
       TempMat[, 2] <- rbinom(pop_size, size = 1, prob = 0.5)
@@ -70,11 +70,11 @@ generate_data <- function(full_tree, tree_scales, pop_size, qmat, Random = FALSE
       TempMat[, 1] <- paste0(TempMat[, 2], TempMat[, 3])
     }
   }
-  
+
   #Now re-add the taxon numbers to this matrix
   TempMat[, 4] <- TempMat[, 1]
   TempMat[, 1] <- 1:pop_size
-  
+
   #Assign the Temporary Matrix to the global environment
   return(TempMat)
 }
@@ -83,10 +83,10 @@ generate_data <- function(full_tree, tree_scales, pop_size, qmat, Random = FALSE
 find_random_clade <- function(full_tree, unknown_n) {
   # Get all internal nodes
   internal_nodes <- (length(full_tree$tip.label) + 1):max(full_tree$edge)
-  
+
   # Shuffle nodes to randomize search order
   internal_nodes <- sample(internal_nodes)
-  
+
   # Function to find a clade with a given number of tips
   find_clade_with_n_tips <- function(n) {
     for (node in internal_nodes) {
@@ -97,11 +97,11 @@ find_random_clade <- function(full_tree, unknown_n) {
     }
     return(NULL)
   }
-  
+
   # Try finding a clade with exactly unknown_n tips
   result <- find_clade_with_n_tips(unknown_n)
   if (!is.null(result)) return(result)
-  
+
   # Expand search range: try -1, then -2, then -3
   for (offset in 1:50) {
     if (unknown_n - offset > 0) {  # Ensure we don’t look for a negative tip count
@@ -109,27 +109,27 @@ find_random_clade <- function(full_tree, unknown_n) {
       if (!is.null(result)) return(result)
     }
   }
-  
+
   # If no clade is found, return a randomly chosen tip
   return(sample(full_tree$tip.label, 1))
 }
 
 
 #This function removed the sampled taxon from the tree and data set.
-edit_data<-function(i, rTaxon, TempMat, trial_name = NULL) {   
+edit_data<-function(i, rTaxon, TempMat, trial_name = NULL) {
   #Create a new "edited" matrix, dropping the sampled taxon's row.
   edited_TempMat <- TempMat[, c(2:3)]
-  
+
   # Assign the first row as row names
   rownames(edited_TempMat) <- TempMat[, 1]
-  
+
   # This function sets the trait value of the sampled taxon to missing for prediction.
   edited_TempMat[rTaxon, 2] <- "-"
-  
+
   # Name and save this new data set
   rates_name <- paste0(trial_name, ".", i, ".rates_data.txt")
   write.table(edited_TempMat, file = rates_name, sep = "\t", row.names = TRUE, col.names = FALSE, quote = FALSE)
-  
+
   # Add another matrix that will be saved to predict
   edited_TempMat[rTaxon, 2] <- "?"
   # This saves the NA as ? instead of -
@@ -145,21 +145,21 @@ countup <- function(i, TempMat, path_name) {
   s01 <- sum(TempMat[, 4] == "01")
   s10 <- sum(TempMat[, 4] == "10")
   s11 <- sum(TempMat[, 4] == "11")
-  
+
   # Create a matrix for counts
   counts <- matrix(0, nrow = 2, ncol = 2)
   colnames(counts) <- c("A=0", "A=1")
   rownames(counts) <- c("B=0", "B=1")
-  
+
   # Fill the matrix with counts based on class values
   counts[1, 1] <- s00  # A=0, B=0
   counts[2, 1] <- s01  # A=0, B=1
   counts[1, 2] <- s10  # A=1, B=0
   counts[2, 2] <- s11  # A=1, B=1
-  
+
   # Print to confirm mid-simulation
   print(counts)
-  
+
   # Save the count table
   filename <- paste0(path_name, ".", i, ".Counts.txt")
   write.table(counts, file = filename, sep = "\t", row.names = TRUE, col.names = TRUE, quote = FALSE)
@@ -172,17 +172,17 @@ countup <- function(i, TempMat, path_name) {
 unknown_branch_length <- function(rTaxon, full_tree) {
   # Identify the correct edges
   leaf_indices <- which(full_tree$tip.label %in% as.character(rTaxon))
-  
+
   # Pull out the branch lengths
   branch_lengths <- full_tree$edge.length[which(full_tree$edge[,2] %in% leaf_indices)]
-  
+
   # If rTaxon is a vector, compute the average branch length
   if (length(branch_lengths) > 1) {
     branch_length <- mean(branch_lengths, na.rm = TRUE)
   } else {
     branch_length <- branch_lengths
   }
-  
+
   # Assign the branch length to be recorded with the rest of the trial
   return(branch_length)
 }
@@ -192,7 +192,7 @@ unknown_branch_length <- function(rTaxon, full_tree) {
 # This function will return all descendant tip labels from any node(s)
 getAllDescendantTips <- function(tree, nodes) {
   tip_labels <- c()
-  
+
   for (node in nodes) {
     if (node %in% tree$tip.label) {
       # Already a tip
@@ -200,14 +200,14 @@ getAllDescendantTips <- function(tree, nodes) {
     } else {
       # Not a tip — get descendants
       desc_nodes <- getDescendants(tree, node)
-      
+
       # Separate tips and internal nodes
       tips <- desc_nodes[desc_nodes <= Ntip(tree)]
       internals <- desc_nodes[desc_nodes > Ntip(tree)]
-      
+
       # Add tip labels
       tip_labels <- c(tip_labels, tree$tip.label[tips])
-      
+
       # Recurse into internal nodes (if any)
       if (length(internals) > 0) {
         tip_labels <- c(tip_labels, getAllDescendantTips(tree, internals))
@@ -222,23 +222,23 @@ getAllDescendantTips <- function(tree, nodes) {
 sisterData <- function(tree, taxon, data, trait = "A") {
   # Step 1: Get sister nodes of your focal taxon (use numeric nodes or labels as needed)
   sisters <- getSisters(tree, taxon, mode = "number")  # use mode="number" for numeric nodes
-  
+
   # Step 2: Get all descendant tip labels of the sister nodes recursively
   descendant_tips_all <- getAllDescendantTips(tree, sisters)
-  
+
   # Step 3: Extract trait values for those tips from data
   # Assuming rownames(data) are tip labels
   if (!all(descendant_tips_all %in% rownames(data))) {
     stop("Some descendant tips not found in data rownames.")
   }
-  
+
   # Return the correct trait data
   if (trait == "A") {
     sisters_A <- mean(data[descendant_tips_all, 2], na.rm = TRUE)
     return(sisters_A)
   } else if (trait == "B") {
     sisters_B <- mean(data[descendant_tips_all, 3], na.rm = TRUE)
-    return(sisters_B)    
+    return(sisters_B)
   } else {print("Specified trait not found.")}
 }
 
@@ -250,26 +250,26 @@ sisterData <- function(tree, taxon, data, trait = "A") {
 #This function calculates a Bayesian, non-phylogenetic predictive probability,
 # which will be used to compare to the phylogenetic results.
 Beta_Bin_predict <- function(edited_TempMat, unknown_n) {
-  
+
   #Start by calculating y, which is the number of successes (or 1s)
   x <- nrow(edited_TempMat)
   y <- sum(edited_TempMat[, 2] == 1)
-  
+
   #We can now calculate the alpha and beta posterior distribution parameters
   #This is because we assume a prior distribution ~Beta(1,1)
   Shape1 <- y + 1
-  Shape2 <- 1 + x - y 
-  
+  Shape2 <- 1 + x - y
+
   #Then we sample the distribution
   pi.values <- rbeta(1000, Shape1, Shape2)
-  
+
   # Next, we will use rbinom with pi as the probability to create
   # a Bayesian posterior predictive distribution.
   PiDist <- rbinom(1000,1, prob = pi.values)
-  
+
   #Get a frequency of 1s from the rbinom, and that's the posterior probability
   frequency <- (sum(PiDist)/1000)
-  
+
   # Repeat the frequency value to match the length of unknown_n and assign it to the environment
   BB.Prob <- rep(frequency, unknown_n)
   return(frequency)
@@ -285,7 +285,7 @@ Naive_Bayes_predict <- function(Counts, rTaxonValueA) {
     rTaxonValueA == 0,
     Counts[2,1] / (Counts[1,1] + Counts[2,1]),
     Counts[2,2] / (Counts[1,2] + Counts[2,2]))
-  
+
   #Finally, we assign this to the global environment
   return(posterior)
 }
@@ -308,20 +308,20 @@ PriorAll exp 2.5"
     c <- ".Predict"
     e <- ""
   }
-  
+
   if (RJ == TRUE) {
     f <- "RJMCMC."
   } else {
     f <- "MCMC."
   }
-  
+
   # Set the name of the run
   runname <- paste0(output_path, ".Multistate.", f, i, c)
-  
+
   # Compile the settings for Multistate analysis
   settings <- paste0("1
 2
-  
+
 it 1100000
 BurnIn 100000
 Sample 1000
@@ -329,7 +329,7 @@ logFile ", runname, e, "
 ", a, output_path, ".Multistate.", f, i, ".ModelFile.bin
 
 Run")
-  
+
   # Save the settings file
   writeLines(text = settings, con = paste0(runname, ".In.txt"))
 }
@@ -362,7 +362,7 @@ PriorAll exp 2.5"
   #Second, set the run to either independent or dependent
   #b is for the BT setting, d is for naming
   if (IndependentCharacters == TRUE) {
-    b <- "2" 
+    b <- "2"
     d <- ".Ind."
   } else {
     b <- "3"
@@ -393,18 +393,18 @@ Run")
 ################################################################################
 #This function calculates the posterior probability from the output files
 Calculate_Post_Prob <- function(i, model, multistate_prediction, unknown_n, j, trial_name = NULL) {
-  
+
   # Function to calculate posterior probability for a specific column
   compute_posterior <- function(logname, skip_lines, col_offset, j) {
     output <- read.table(logname, header = FALSE, skip = skip_lines, nrows = 1000)
     target_col <- col_offset + j - 1  # Adjust column based on j
     return(mean(output[, target_col]))
   }
-  
+
   MS.skip <- 43 + unknown_n
   Ind.skip <- 47 + unknown_n
   Dep.skip <- 55 + unknown_n
-  
+
   if (model %in% c("RJMCMC", "BOTH")) {
     assign("Ind.RJ.Prob", compute_posterior(paste0("./", trial_name, ".Ind.RJMCMC.", i, ".Predict.Log.txt"), Ind.skip, 9, j), envir = .GlobalEnv)
     assign("Dep.RJ.Prob", compute_posterior(paste0("./", trial_name, ".Dep.RJMCMC.", i, ".Predict.Log.txt"), Dep.skip, 13, j), envir = .GlobalEnv)
@@ -412,11 +412,11 @@ Calculate_Post_Prob <- function(i, model, multistate_prediction, unknown_n, j, t
       assign("MS.RJ.Prob", compute_posterior(paste0("./", trial_name, ".Multistate.RJMCMC.", i, ".Predict.Log.txt"), MS.skip, 7, j), envir = .GlobalEnv)
     }
   }
-  
+
   if (model %in% c("MCMC", "BOTH")) {
     assign("Ind.MCMC.Prob", compute_posterior(paste0("./", trial_name, ".Ind.MCMC.", i, ".Predict.Log.txt"), Ind.skip, 9, j), envir = .GlobalEnv)
     assign("Dep.MCMC.Prob", compute_posterior(paste0("./", trial_name, ".Dep.MCMC.", i, ".Predict.Log.txt"), Dep.skip, 13, j), envir = .GlobalEnv)
-    if (isTRUE(multistate_prediction)) {    
+    if (isTRUE(multistate_prediction)) {
       assign("MS.MCMC.Prob", compute_posterior(paste0("./", trial_name, ".Multistate.MCMC.", i, ".Predict.Log.txt"), MS.skip, 7, j), envir = .GlobalEnv)
     }
   }
@@ -424,9 +424,9 @@ Calculate_Post_Prob <- function(i, model, multistate_prediction, unknown_n, j, t
 
 
 
-# A function for pulling the estimated q-matrices from BayesTraits' log files 
+# A function for pulling the estimated q-matrices from BayesTraits' log files
 estimated_qmat <- function(type, i, IndependentRates = TRUE, ConstantRates = TRUE, RJ = FALSE, Predict = FALSE, Random = FALSE) {
-  
+
   # Determine the file name
   # First, the trait independence
   if (IndependentRates == TRUE) {
@@ -434,33 +434,33 @@ estimated_qmat <- function(type, i, IndependentRates = TRUE, ConstantRates = TRU
   } else {
     IndDep <- ".Dep."
   }
-  
+
   # Next, the variablility of the rates
   if (ConstantRates == TRUE) {
     Rates <- "ConstantRates"
   } else {
     Rates <- "VariableRates"
   }
-  
+
   # Next, the variablility of the rates
   if (RJ == TRUE) {
     MCMCRJ <- "RJMCMC."
   } else {
     MCMCRJ <- "MCMC."
   }
-  
+
   # First, determine which log file we are using
   if (Predict == TRUE) {
     RatesPredict <- ".Predict.Log.txt"
-    
+
     # Determine the skipped lines based upon this
     skipped <- if (IndependentRates) 47 else 55
     colSkip <- 1
-  
-  # Same process, but if we are using the Rates log file, which is a bit more complex   
+
+  # Same process, but if we are using the Rates log file, which is a bit more complex
   } else {
     RatesPredict <- ".Rates.Log.txt"
-    
+
     # Determine the location of the columns of interest
     if (IndependentRates == TRUE && RJ == FALSE){
       skipped <- 45
@@ -477,14 +477,14 @@ estimated_qmat <- function(type, i, IndependentRates = TRUE, ConstantRates = TRU
     }
   }
 
-  
+
   # Now build the file name
   logname <- paste0(Rates, "/", type, "/Single/", type, IndDep, MCMCRJ, i, RatesPredict)
   if (Random == T) {logname <- paste0("Random/Single/Random", IndDep, MCMCRJ, i, RatesPredict)}
-  
+
   # Pull the log file
   logdata <- read.delim(logname, skip = skipped)
-  
+
   # Summarize the log files
   if (IndependentRates == TRUE) {
     q12 <- median(logdata[, 5+colSkip])
@@ -505,12 +505,12 @@ estimated_qmat <- function(type, i, IndependentRates = TRUE, ConstantRates = TRU
     q42 <- median(logdata[, 10+colSkip])
     q43 <- median(logdata[, 11+colSkip])
   }
-  
+
   # Then compile the q- matrix
   qmat <- matrix(data = c(0, q12, q13, 0, q21, 0, 0, q24, q31, 0, 0, q34, 0, q42, q43, 0 ), nrow = 4, ncol = 4)
   # Write a line to sum the rows to 0
   diag(qmat) <- -rowSums(qmat - diag(diag(qmat)))
-  
+
   # Finally, return the q-matrix
   return(qmat)
 }
@@ -527,15 +527,15 @@ calculate_accuracy <- function(rTaxonValueB, Predictive_Probability) {
   return(accuracy)
 }
 
-# This funciton will be used to calculate LogLoss Values 
+# This funciton will be used to calculate LogLoss Values
 LogLoss <- function(rTaxonValueB, Predictive_Probability) {
   # Ensure probabilities are within valid range to avoid log(0) errors
   Predictive_Probability <- pmax(pmin(Predictive_Probability, 0.99999), 0.00001)
-  
+
   # Compute log-loss formula
-  LL <- -(rTaxonValueB * log(Predictive_Probability) + 
+  LL <- -(rTaxonValueB * log(Predictive_Probability) +
             (1 - rTaxonValueB) * log(1 - Predictive_Probability))
-  
+
   # Return the mean log loss (works for both vectors and single values)
   return(mean(LL, na.rm = TRUE))
 }

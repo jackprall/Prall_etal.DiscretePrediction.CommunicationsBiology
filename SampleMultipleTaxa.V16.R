@@ -2,7 +2,7 @@
 # Takes ~2 hours and 22 minutes for 1000 trials, 500-tips, and all optional runs
 
 
-##### 
+#####
 # First, get simulation bash file and any useful functions for this script
 bash_file <- Sys.glob("Discrete_Simulation.V*")
 version_str <- sub(".*(V[0-9]+).*", "\\1", bash_file)
@@ -55,15 +55,15 @@ if (multiple_prediction == TRUE) {
   for (type in types) {
     # Create a matrix for this trial's data
     trial_data <- matrix(nrow = 0, ncol = 5)
-    colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", 
+    colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B",
                               "Branch_length")
-    
+
     # Now we need to delve into each type
     for (i in 1:trial_amount) {
       # First, call the full data set
       fullname <- paste0("ConstantRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
       TempMat <- read.table(file = fullname, skip = 1)
-      
+
       # Ensure an even sample of A=0 and A=1
       if (i %% 2 == 1) {
         # i is odd: sample where column 2 == 0
@@ -72,11 +72,11 @@ if (multiple_prediction == TRUE) {
         # i is even: sample where column 2 == 1
         eligible_rows <- which(TempMat[, 2] == 1)
       }
-      
+
       # Define ineligible rows (everything else)
       all_rows <- seq_len(nrow(TempMat))
       ineligible_rows <- setdiff(all_rows, eligible_rows)
-      
+
       # Now sample:
       if (length(eligible_rows) >= unknown_size) {
         # Enough eligible rows — sample only from them
@@ -84,26 +84,26 @@ if (multiple_prediction == TRUE) {
       } else {
         # Not enough eligible rows — take all of them
         used_eligible <- eligible_rows
-        
+
         # Check how many more we need
         remainder <- unknown_size - length(used_eligible)
-        
+
         # Sample the rest from ineligible rows
         used_ineligible <- sample(ineligible_rows, remainder, replace = FALSE)
-        
+
         # Combine both parts
         rTaxon <- c(used_eligible, used_ineligible)
       }
-      
+
       # Make sure this is in the correct order then store the character data
       rTaxon <- sort(rTaxon)
       rTaxonValueA <- as.numeric(TempMat[rTaxon, 2])
       rTaxonValueB <- as.numeric(TempMat[rTaxon, 3])
-      
+
       # Pull the tree to read the terminal branch length
       treename <- paste0("Trees/Full_tree.", i, ".tre")
       full_tree <- read.nexus(treename)
-      
+
       # Terminal branch length with be calculated as we in put the new data
       # Loop through to store each sampled taxon's data
       for (j in 1:length(rTaxon)) {
@@ -115,22 +115,22 @@ if (multiple_prediction == TRUE) {
     trial_name <- paste0("ConstantRates/", type, "/Multiple/", type, ".Unknown_info.txt")
     write.table(trial_data, file = trial_name, row.names = F, col.names = T, sep = "\t", quote = F)
   }
-  
-  
-  
-  
+
+
+
+
   ### Run the random rates next
   # Create a matrix for the random trials' data
   trial_data <- matrix(nrow = 0, ncol = 5)
-  colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", 
+  colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B",
                             "Branch_length")
-  
+
   # Now we need to delve into each type
   for (i in 1:trial_amount) {
     # First, call the full data set
     fullname <- paste0("Random/Data/Random.", i, ".Full_data.txt")
     TempMat <- read.table(file = fullname, skip = 1)
-    
+
     # Ensure an even sample of A=0 and A=1
     if (i %% 2 == 1) {
       # i is odd: sample where column 2 == 0
@@ -139,11 +139,11 @@ if (multiple_prediction == TRUE) {
       # i is even: sample where column 2 == 1
       eligible_rows <- which(TempMat[, 2] == 1)
     }
-    
+
     # Define ineligible rows (everything else)
     all_rows <- seq_len(nrow(TempMat))
     ineligible_rows <- setdiff(all_rows, eligible_rows)
-    
+
     # Now sample:
     if (length(eligible_rows) >= unknown_size) {
       # Enough eligible rows — sample only from them
@@ -151,26 +151,26 @@ if (multiple_prediction == TRUE) {
     } else {
       # Not enough eligible rows — take all of them
       used_eligible <- eligible_rows
-      
+
       # Check how many more we need
       remainder <- unknown_size - length(used_eligible)
-      
+
       # Sample the rest from ineligible rows
       used_ineligible <- sample(ineligible_rows, remainder, replace = FALSE)
-      
+
       # Combine both parts
       rTaxon <- c(used_eligible, used_ineligible)
     }
-    
+
     # Make sure this is in the correct order then store the character data
     rTaxon <- sort(rTaxon)
     rTaxonValueA <- as.numeric(TempMat[rTaxon, 2])
     rTaxonValueB <- as.numeric(TempMat[rTaxon, 3])
-    
+
     # Pull the tree to read the terminal branch length
     treename <- paste0("Trees/Full_tree.", i, ".tre")
     full_tree <- read.nexus(treename)
-    
+
     # Terminal branch length with be calculated as we in put the new data
     # Loop through to store each sampled taxon's data
     for (j in 1:length(rTaxon)) {
@@ -179,25 +179,25 @@ if (multiple_prediction == TRUE) {
       trial_data <- rbind(trial_data, trial)
     }
   }
-  
+
   write.table(trial_data, file = "Random/Multiple/Random.Unknown_info.txt", row.names = F, col.names = T, sep = "\t", quote = F)
-  
-  
-  
+
+
+
   ### Run the variable rates if necessary
-  if (variable_rates == TRUE) { 
+  if (variable_rates == TRUE) {
     for (type in types) {
       # Create a matrix for this trial's data
       trial_data <- matrix(nrow = 0, ncol = 5)
-      colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", 
+      colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B",
                                 "Branch_length")
-      
+
       # Now we need to delve into each type
       for (i in 1:trial_amount) {
         # First, call the full data set
         fullname <- paste0("VariableRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
         TempMat <- read.table(file = fullname, skip = 1)
-        
+
         # Ensure an even sample of A=0 and A=1
         if (i %% 2 == 1) {
           # i is odd: sample where column 2 == 0
@@ -206,11 +206,11 @@ if (multiple_prediction == TRUE) {
           # i is even: sample where column 2 == 1
           eligible_rows <- which(TempMat[, 2] == 1)
         }
-        
+
         # Define ineligible rows (everything else)
         all_rows <- seq_len(nrow(TempMat))
         ineligible_rows <- setdiff(all_rows, eligible_rows)
-        
+
         # Now sample:
         if (length(eligible_rows) >= unknown_size) {
           # Enough eligible rows — sample only from them
@@ -218,26 +218,26 @@ if (multiple_prediction == TRUE) {
         } else {
           # Not enough eligible rows — take all of them
           used_eligible <- eligible_rows
-          
+
           # Check how many more we need
           remainder <- unknown_size - length(used_eligible)
-          
+
           # Sample the rest from ineligible rows
           used_ineligible <- sample(ineligible_rows, remainder, replace = FALSE)
-          
+
           # Combine both parts
           rTaxon <- c(used_eligible, used_ineligible)
         }
-        
+
         # Make sure this is in the correct order then store the character data
         rTaxon <- sort(rTaxon)
         rTaxonValueA <- as.numeric(TempMat[rTaxon, 2])
         rTaxonValueB <- as.numeric(TempMat[rTaxon, 3])
-        
+
         # Pull the tree to read the terminal branch length
         treename <- paste0("Trees/Full_tree.", i, ".tre")
         full_tree <- read.nexus(treename)
-        
+
         # Terminal branch length with be calculated as we in put the new data
         # Loop through to store each sampled taxon's data
         for (j in 1:length(rTaxon)) {
@@ -261,27 +261,27 @@ if (clade_prediction == TRUE) {
   for (type in types) {
     # Create a matrix for this trial's data
     trial_data <- matrix(nrow = 0, ncol = 5)
-    colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", 
+    colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B",
                               "Branch_length")
-    
+
     # Now we need to delve into each type
     for (i in 1:trial_amount) {
       # Pull the tree to find a random clade
       treename <- paste0("Trees/Full_tree.", i, ".tre")
       full_tree <- read.nexus(treename)
-      
+
       # Use the tree to randomly select a clade of tips to be our rTaxon
       rTaxon <- as.numeric(find_random_clade(full_tree, unknown_size))
-      
+
       # Then, call the full data set
       fullname <- paste0("ConstantRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
       TempMat <- read.table(file = fullname, skip = 1)
-      
+
       # Make sure this is in the correct order then store the character data
       rTaxon <- sort(rTaxon)
       rTaxonValueA <- as.numeric(TempMat[rTaxon, 2])
       rTaxonValueB <- as.numeric(TempMat[rTaxon, 3])
-      
+
       # Terminal branch length with be calculated as we in put the new data
       # Loop through to store each sampled taxon's data
       for (j in 1:length(rTaxon)) {
@@ -293,34 +293,34 @@ if (clade_prediction == TRUE) {
     trial_name <- paste0("ConstantRates/", type, "/Clade/", type, ".Unknown_info.txt")
     write.table(trial_data, file = trial_name, row.names = F, col.names = T, sep = "\t", quote = F)
   }
-  
-  
-  
-  
+
+
+
+
   ### Run the random rates next
   # Create a matrix for the random trials' data
   trial_data <- matrix(nrow = 0, ncol = 5)
-  colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", 
+  colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B",
                             "Branch_length")
-  
+
   # Now we need to delve into each type
   for (i in 1:trial_amount) {
     # Pull the tree to find a random clade
     treename <- paste0("Trees/Full_tree.", i, ".tre")
     full_tree <- read.nexus(treename)
-    
+
     # Use the tree to randomly select a clade of tips to be our rTaxon
     rTaxon <- as.numeric(find_random_clade(full_tree, unknown_size))
-    
+
     # Then, call the full data set
     fullname <- paste0("Random/Data/Random.", i, ".Full_data.txt")
     TempMat <- read.table(file = fullname, skip = 1)
-    
+
     # Make sure this is in the correct order then store the character data
     rTaxon <- sort(rTaxon)
     rTaxonValueA <- as.numeric(TempMat[rTaxon, 2])
     rTaxonValueB <- as.numeric(TempMat[rTaxon, 3])
-    
+
     # Terminal branch length with be calculated as we in put the new data
     # Loop through to store each sampled taxon's data
     for (j in 1:length(rTaxon)) {
@@ -329,37 +329,37 @@ if (clade_prediction == TRUE) {
       trial_data <- rbind(trial_data, trial)
     }
   }
-  
+
   write.table(trial_data, file = "Random/Clade/Random.Unknown_info.txt", row.names = F, col.names = T, sep = "\t", quote = F)
-  
-  
-  
+
+
+
   ### Run the variable rates if necessary
-  if (variable_rates == TRUE) { 
+  if (variable_rates == TRUE) {
     for (type in types) {
       # Create a matrix for this trial's data
       trial_data <- matrix(nrow = 0, ncol = 5)
-      colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", 
+      colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B",
                                 "Branch_length")
-      
+
       # Now we need to delve into each type
       for (i in 1:trial_amount) {
         # Pull the tree to find a random clade
         treename <- paste0("Trees/Full_tree.", i, ".tre")
         full_tree <- read.nexus(treename)
-        
+
         # Use the tree to randomly select a clade of tips to be our rTaxon
         rTaxon <- as.numeric(find_random_clade(full_tree, unknown_size))
-        
+
         # Then, call the full data set
         fullname <- paste0("VariableRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
         TempMat <- read.table(file = fullname, skip = 1)
-        
+
         # Make sure this is in the correct order then store the character data
         rTaxon <- sort(rTaxon)
         rTaxonValueA <- as.numeric(TempMat[rTaxon, 2])
         rTaxonValueB <- as.numeric(TempMat[rTaxon, 3])
-        
+
         # Terminal branch length with be calculated as we in put the new data
         # Loop through to store each sampled taxon's data
         for (j in 1:length(rTaxon)) {

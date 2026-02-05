@@ -64,7 +64,7 @@ if (variable_rates == TRUE && !dir.exists("VariableRates")) {
     dir.create(paste0(path, "/Single"))
     # Check if we need additional directories
     if (multiple_prediction == TRUE) {dir.create(paste0(path, "/Multiple"))}
-    if (clade_prediction == TRUE) {dir.create(paste0(path, "/Clade"))}    
+    if (clade_prediction == TRUE) {dir.create(paste0(path, "/Clade"))}
 
   }
 }
@@ -81,8 +81,8 @@ if (!dir.exists("ConstantRates")) {
     dir.create(paste0(path, "/Single"))
     # Check if we need additional directories
     if (multiple_prediction == TRUE) {dir.create(paste0(path, "/Multiple"))}
-    if (clade_prediction == TRUE) {dir.create(paste0(path, "/Clade"))}    
-    
+    if (clade_prediction == TRUE) {dir.create(paste0(path, "/Clade"))}
+
   }
 }
 

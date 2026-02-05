@@ -43,29 +43,29 @@ for (type in types) {
   # Get to the constant rates folder
   folder_path <- file.path(constant_path, type, "Single")
   setwd(folder_path)
-  
+
   # Get all files in the working directory
   files <- list.files()
-  
+
   # Filter files that match any of the patterns
   target_files <- files[grepl(filesToRemove, files)]
-  
+
   # Delete the matched files
   file.remove(target_files)
-  
-  
+
+
   ### Now check variable rates
   if (isTRUE(variable_rates)) {
     # Get to the constant rates folder
     folder_path <- file.path(variable_path, type, "Single")
     setwd(folder_path)
-    
+
     # Get all files in the working directory
     files <- list.files()
-    
+
     # Filter files that match any of the patterns
     target_files <- files[grepl(filesToRemove, files)]
-    
+
     # Delete the matched files
     file.remove(target_files)
   }
@@ -93,44 +93,44 @@ if (isTRUE(multiple_prediction)) {
     # Get to the constant rates folder
     folder_path <- file.path(constant_path, type, "Multiple")
     setwd(folder_path)
-    
+
     # Get all files in the working directory
     files <- list.files()
-    
+
     # Filter files that match any of the patterns
     target_files <- files[grepl(filesToRemove, files)]
-    
+
     # Delete the matched files
     file.remove(target_files)
-    
-    
+
+
     ### Now check variable rates
     if (isTRUE(variable_rates)) {
       # Get to the constant rates folder
       folder_path <- file.path(variable_path, type, "Multiple")
       setwd(folder_path)
-      
+
       # Get all files in the working directory
       files <- list.files()
-      
+
       # Filter files that match any of the patterns
       target_files <- files[grepl(filesToRemove, files)]
-      
+
       # Delete the matched files
       file.remove(target_files)
     }
   }
-  
+
   # Get to the random rates folder
   folder_path <- file.path(random_path, "Multiple")
   setwd(folder_path)
-  
+
   # Get all files in the working directory
   files <- list.files()
-  
+
   # Filter files that match any of the patterns
   target_files <- files[grepl(filesToRemove, files)]
-  
+
   # Delete the matched files
   file.remove(target_files)
 }
@@ -144,44 +144,44 @@ if (isTRUE(clade_prediction)) {
     # Get to the constant rates folder
     folder_path <- file.path(constant_path, type, "Clade")
     setwd(folder_path)
-    
+
     # Get all files in the working directory
     files <- list.files()
-    
+
     # Filter files that match any of the patterns
     target_files <- files[grepl(filesToRemove, files)]
-    
+
     # Delete the matched files
     file.remove(target_files)
-    
-    
+
+
     ### Now check variable rates
     if (isTRUE(variable_rates)) {
       # Get to the constant rates folder
       folder_path <- file.path(variable_path, type, "Clade")
       setwd(folder_path)
-      
+
       # Get all files in the working directory
       files <- list.files()
-      
+
       # Filter files that match any of the patterns
       target_files <- files[grepl(filesToRemove, files)]
-      
+
       # Delete the matched files
       file.remove(target_files)
     }
   }
-  
+
   # Get to the random rates folder
   folder_path <- file.path(random_path, "Clade")
   setwd(folder_path)
-  
+
   # Get all files in the working directory
   files <- list.files()
-  
+
   # Filter files that match any of the patterns
   target_files <- files[grepl(filesToRemove, files)]
-  
+
   # Delete the matched files
   file.remove(target_files)
 }

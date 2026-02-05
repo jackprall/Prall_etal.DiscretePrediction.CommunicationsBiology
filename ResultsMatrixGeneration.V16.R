@@ -106,40 +106,40 @@ for (type in types) {
   unknown_info <- read.table(unknown_name, skip = 1, col.names = unknown_labels)
   row_num <- nrow(unknown_info)
   full_data_path <- paste0("ConstantRates/", type, "/Data/", type)
-  
+
   # Next, create the new section of the results matrix
   matrix_b <- matrix(data=NA, nrow = row_num, ncol = new_col_number)
   colnames(matrix_b) <- new_col_names
-  
+
   # Combine the unknown information with the new space for results
   results <- cbind(unknown_info, matrix_b)
-  
+
   # Fill in the counts data that has already by calculated
   for (i in 1:trial_amount) {
     # Find the rows that match the trial number
     trial_i <- which(results[, 1] == i)
     matching_rows <- which(results[, "Trial"] == i)
-    
+
     # Pull the true state data
     full_data_name <- paste0(full_data_path, ".", i, ".Full_data.txt")
     trait_data <- read.table(full_data_name, skip = 1, sep = "\t")
     trait_data[,4] <- match(trait_data[,4], c(0,1,10,11))
-    
+
     # Put the 4-state character into the results matrix
     rTaxon <- results[matching_rows, "rTaxon"]
     for (j in seq_along(rTaxon)) {results[matching_rows[j], "True_4States"] <- trait_data[rTaxon[j], 4]}
-    
+
     # Call the count data and sort it into a vector
     count_name <- paste0("ConstantRates/", type, "/Data/", type, ".", i, ".Counts.txt")
     counts <- read.table(count_name, skip = 1)
     count_vector <- c(counts[1, 2], counts[2, 2], counts[1, 3], counts[2, 3])
-    
+
     # Remove the unknown taxa and store it for later
     truestate_vector <- results[matching_rows, "True_4States"]
     for (j in seq_along(rTaxon)) {count_vector[truestate_vector[j]] <- count_vector[truestate_vector[j]] - 1}
     results[trial_i, c("n00", "n01", "n10", "n11")] <- count_vector
   }
-  
+
   # Finally, write the matrix somewhere it can be accessed later
   results_name <- paste0("Results/ConstantRates/Single/", type, ".Single.ResultsFull.txt")
   write.table(results, file = results_name, quote = F, sep = "\t", row.names = F, col.names = T)
@@ -167,21 +167,21 @@ for (i in 1:trial_amount) {
   # Find the rows that match the trial number
   trial_i <- which(results[, 1] == i)
   matching_rows <- which(results[, "Trial"] == i)
-  
+
   # Pull the true state data
   full_data_name <- paste0(full_data_path, ".", i, ".Full_data.txt")
   trait_data <- read.table(full_data_name, skip = 1, sep = "\t")
   trait_data[,4] <- match(trait_data[,4], c(0,1,10,11))
-  
+
   # Put the 4-state character into the results matrix
   rTaxon <- results[matching_rows, "rTaxon"]
   for (j in seq_along(rTaxon)) {results[matching_rows[j], "True_4States"] <- trait_data[rTaxon[j], 4]}
-  
+
   # Call the count data and sort it into a vector
   count_name <- paste0("Random/Data/Random.", i, ".Counts.txt")
   counts <- read.table(count_name, skip = 1)
   count_vector <- c(counts[1, 2], counts[2, 2], counts[1, 3], counts[2, 3])
-  
+
   # Remove the unknown taxa and store it for later
   truestate_vector <- results[matching_rows, "True_4States"]
   for (j in seq_along(rTaxon)) {count_vector[truestate_vector[j]] <- count_vector[truestate_vector[j]] - 1}
@@ -205,40 +205,40 @@ if (variable_rates == TRUE) {
     unknown_info <- read.table(unknown_name, skip = 1, col.names = unknown_labels)
     row_num <- nrow(unknown_info)
     full_data_path <- paste0("VariableRates/", type, "/Data/", type)
-    
+
     # Next, create the new section of the results matrix
     matrix_b <- matrix(data=NA, nrow = row_num, ncol = new_col_number)
     colnames(matrix_b) <- new_col_names
-    
+
     # Combine the unknown information with the new space for results
     results <- cbind(unknown_info, matrix_b)
-    
+
     # Fill in the counts data that has already by calculated
     for (i in 1:trial_amount) {
       # Find the rows that match the trial number
       trial_i <- which(results[, 1] == i)
       matching_rows <- which(results[, "Trial"] == i)
-      
+
       # Pull the true state data
       full_data_name <- paste0(full_data_path, ".", i, ".Full_data.txt")
       trait_data <- read.table(full_data_name, skip = 1, sep = "\t")
       trait_data[,4] <- match(trait_data[,4], c(0,1,10,11))
-      
+
       # Put the 4-state character into the results matrix
       rTaxon <- results[matching_rows, "rTaxon"]
       for (j in seq_along(rTaxon)) {results[matching_rows[j], "True_4States"] <- trait_data[rTaxon[j], 4]}
-      
+
       # Call the count data and sort it into a vector
       count_name <- paste0("VariableRates/", type, "/Data/", type, ".", i, ".Counts.txt")
       counts <- read.table(count_name, skip = 1)
       count_vector <- c(counts[1, 2], counts[2, 2], counts[1, 3], counts[2, 3])
-      
+
       # Remove the unknown taxa and store it for later
       truestate_vector <- results[matching_rows, "True_4States"]
       for (j in seq_along(rTaxon)) {count_vector[truestate_vector[j]] <- count_vector[truestate_vector[j]] - 1}
       results[trial_i, c("n00", "n01", "n10", "n11")] <- count_vector
     }
-    
+
     # Finally, write the matrix somewhere it can be accessed later
     results_name <- paste0("Results/VariableRates/Single/", type, ".Single.ResultsFull.txt")
     write.table(results, file = results_name, quote = F, sep = "\t", row.names = F, col.names = T)
@@ -256,40 +256,40 @@ if (multiple_prediction == TRUE) {
     unknown_info <- read.table(unknown_name, skip = 1, col.names = unknown_labels)
     row_num <- nrow(unknown_info)
     full_data_path <- paste0("ConstantRates/", type, "/Data/", type)
-    
+
     # Next, create the new section of the results matrix
     matrix_b <- matrix(data=NA, nrow = row_num, ncol = new_col_number)
     colnames(matrix_b) <- new_col_names
-    
+
     # Combine the unknown information with the new space for results
     results <- cbind(unknown_info, matrix_b)
-    
+
     # Fill in the counts data that has already by calculated
     for (i in 1:trial_amount) {
       # Find the rows that match the trial number
       trial_i <- which(results[, 1] == i)
       matching_rows <- which(results[, "Trial"] == i)
-      
+
       # Pull the true state data
       full_data_name <- paste0(full_data_path, ".", i, ".Full_data.txt")
       trait_data <- read.table(full_data_name, skip = 1, sep = "\t")
       trait_data[,4] <- match(trait_data[,4], c(0,1,10,11))
-      
+
       # Put the 4-state character into the results matrix
       rTaxon <- results[matching_rows, "rTaxon"]
       for (j in seq_along(rTaxon)) {results[matching_rows[j], "True_4States"] <- trait_data[rTaxon[j], 4]}
-      
+
       # Call the count data and sort it into a vector
       count_name <- paste0("ConstantRates/", type, "/Data/", type, ".", i, ".Counts.txt")
       counts <- read.table(count_name, skip = 1)
       count_vector <- c(counts[1, 2], counts[2, 2], counts[1, 3], counts[2, 3])
-      
+
       # Remove the unknown taxa and store it for later
       truestate_vector <- results[matching_rows, "True_4States"]
       for (j in seq_along(rTaxon)) {count_vector[truestate_vector[j]] <- count_vector[truestate_vector[j]] - 1}
       results[trial_i, c("n00", "n01", "n10", "n11")] <- count_vector
     }
-    
+
     # Finally, write the matrix somewhere it can be accessed later
     results_name <- paste0("Results/ConstantRates/Multiple/", type, ".Multiple.ResultsFull.txt")
     write.table(results, file = results_name, quote = F, sep = "\t", row.names = F, col.names = T)
@@ -306,40 +306,40 @@ if (variable_rates == TRUE && multiple_prediction == TRUE) {
     unknown_info <- read.table(unknown_name, skip = 1, col.names = unknown_labels)
     row_num <- nrow(unknown_info)
     full_data_path <- paste0("VariableRates/", type, "/Data/", type)
-    
+
     # Next, create the new section of the results matrix
     matrix_b <- matrix(data=NA, nrow = row_num, ncol = new_col_number)
     colnames(matrix_b) <- new_col_names
-    
+
     # Combine the unknown information with the new space for results
     results <- cbind(unknown_info, matrix_b)
-    
+
     # Fill in the counts data that has already by calculated
     for (i in 1:trial_amount) {
       # Find the rows that match the trial number
       trial_i <- which(results[, 1] == i)
       matching_rows <- which(results[, "Trial"] == i)
-      
+
       # Pull the true state data
       full_data_name <- paste0(full_data_path, ".", i, ".Full_data.txt")
       trait_data <- read.table(full_data_name, skip = 1, sep = "\t")
       trait_data[,4] <- match(trait_data[,4], c(0,1,10,11))
-      
+
       # Put the 4-state character into the results matrix
       rTaxon <- results[matching_rows, "rTaxon"]
       for (j in seq_along(rTaxon)) {results[matching_rows[j], "True_4States"] <- trait_data[rTaxon[j], 4]}
-      
+
       # Call the count data and sort it into a vector
       count_name <- paste0("VariableRates/", type, "/Data/", type, ".", i, ".Counts.txt")
       counts <- read.table(count_name, skip = 1)
       count_vector <- c(counts[1, 2], counts[2, 2], counts[1, 3], counts[2, 3])
-      
+
       # Remove the unknown taxa and store it for later
       truestate_vector <- results[matching_rows, "True_4States"]
       for (j in seq_along(rTaxon)) {count_vector[truestate_vector[j]] <- count_vector[truestate_vector[j]] - 1}
       results[trial_i, c("n00", "n01", "n10", "n11")] <- count_vector
     }
-    
+
     # Finally, write the matrix somewhere it can be accessed later
     results_name <- paste0("Results/VariableRates/Multiple/", type, ".Multiple.ResultsFull.txt")
     write.table(results, file = results_name, quote = F, sep = "\t", row.names = F, col.names = T)
@@ -358,40 +358,40 @@ if (clade_prediction == TRUE) {
     unknown_info <- read.table(unknown_name, skip = 1, col.names = unknown_labels)
     row_num <- nrow(unknown_info)
     full_data_path <- paste0("ConstantRates/", type, "/Data/", type)
-    
+
     # Next, create the new section of the results matrix
     matrix_b <- matrix(data=NA, nrow = row_num, ncol = new_col_number)
     colnames(matrix_b) <- new_col_names
-    
+
     # Combine the unknown information with the new space for results
     results <- cbind(unknown_info, matrix_b)
-    
+
     # Fill in the counts data that has already by calculated
     for (i in 1:trial_amount) {
       # Find the rows that match the trial number
       trial_i <- which(results[, 1] == i)
       matching_rows <- which(results[, "Trial"] == i)
-      
+
       # Pull the true state data
       full_data_name <- paste0(full_data_path, ".", i, ".Full_data.txt")
       trait_data <- read.table(full_data_name, skip = 1, sep = "\t")
       trait_data[,4] <- match(trait_data[,4], c(0,1,10,11))
-      
+
       # Put the 4-state character into the results matrix
       rTaxon <- results[matching_rows, "rTaxon"]
       for (j in seq_along(rTaxon)) {results[matching_rows[j], "True_4States"] <- trait_data[rTaxon[j], 4]}
-      
+
       # Call the count data and sort it into a vector
       count_name <- paste0("ConstantRates/", type, "/Data/", type, ".", i, ".Counts.txt")
       counts <- read.table(count_name, skip = 1)
       count_vector <- c(counts[1, 2], counts[2, 2], counts[1, 3], counts[2, 3])
-      
+
       # Remove the unknown taxa and store it for later
       truestate_vector <- results[matching_rows, "True_4States"]
       for (j in seq_along(rTaxon)) {count_vector[truestate_vector[j]] <- count_vector[truestate_vector[j]] - 1}
       results[trial_i, c("n00", "n01", "n10", "n11")] <- count_vector
     }
-    
+
     # Finally, write the matrix somewhere it can be accessed later
     results_name <- paste0("Results/ConstantRates/Clade/", type, ".Clade.ResultsFull.txt")
     write.table(results, file = results_name, quote = F, sep = "\t", row.names = F, col.names = T)
@@ -408,40 +408,40 @@ if (variable_rates == TRUE && clade_prediction == TRUE) {
     unknown_info <- read.table(unknown_name, skip = 1, col.names = unknown_labels)
     row_num <- nrow(unknown_info)
     full_data_path <- paste0("VariableRates/", type, "/Data/", type)
-    
+
     # Next, create the new section of the results matrix
     matrix_b <- matrix(data=NA, nrow = row_num, ncol = new_col_number)
     colnames(matrix_b) <- new_col_names
-    
+
     # Combine the unknown information with the new space for results
     results <- cbind(unknown_info, matrix_b)
-    
+
     # Fill in the counts data that has already by calculated
     for (i in 1:trial_amount) {
       # Find the rows that match the trial number
       trial_i <- which(results[, 1] == i)
       matching_rows <- which(results[, "Trial"] == i)
-      
+
       # Pull the true state data
       full_data_name <- paste0(full_data_path, ".", i, ".Full_data.txt")
       trait_data <- read.table(full_data_name, skip = 1, sep = "\t")
       trait_data[,4] <- match(trait_data[,4], c(0,1,10,11))
-      
+
       # Put the 4-state character into the results matrix
       rTaxon <- results[matching_rows, "rTaxon"]
       for (j in seq_along(rTaxon)) {results[matching_rows[j], "True_4States"] <- trait_data[rTaxon[j], 4]}
-      
+
       # Call the count data and sort it into a vector
       count_name <- paste0("VariableRates/", type, "/Data/", type, ".", i, ".Counts.txt")
       counts <- read.table(count_name, skip = 1)
       count_vector <- c(counts[1, 2], counts[2, 2], counts[1, 3], counts[2, 3])
-      
+
       # Remove the unknown taxa and store it for later
       truestate_vector <- results[matching_rows, "True_4States"]
       for (j in seq_along(rTaxon)) {count_vector[truestate_vector[j]] <- count_vector[truestate_vector[j]] - 1}
       results[trial_i, c("n00", "n01", "n10", "n11")] <- count_vector
     }
-    
+
     # Finally, write the matrix somewhere it can be accessed later
     results_name <- paste0("Results/VariableRates/Clade/", type, ".Clade.ResultsFull.txt")
     write.table(results, file = results_name, quote = F, sep = "\t", row.names = F, col.names = T)
@@ -458,40 +458,40 @@ if (multiple_prediction == TRUE) {
   unknown_info <- read.table(unknown_name, skip = 1, col.names = unknown_labels)
   row_num <- nrow(unknown_info)
   full_data_path <- "Random/Data/Random"
-  
+
   # Next, create the new section of the results matrix
   matrix_b <- matrix(data=NA, nrow = row_num, ncol = new_col_number)
   colnames(matrix_b) <- new_col_names
-  
+
   # Combine the unknown information with the new space for results
   results <- cbind(unknown_info, matrix_b)
-  
+
   # Fill in the counts data that has already by calculated
   for (i in 1:trial_amount) {
     # Find the rows that match the trial number
     trial_i <- which(results[, 1] == i)
     matching_rows <- which(results[, "Trial"] == i)
-    
+
     # Pull the true state data
     full_data_name <- paste0(full_data_path, ".", i, ".Full_data.txt")
     trait_data <- read.table(full_data_name, skip = 1, sep = "\t")
     trait_data[,4] <- match(trait_data[,4], c(0,1,10,11))
-    
+
     # Put the 4-state character into the results matrix
     rTaxon <- results[matching_rows, "rTaxon"]
     for (j in seq_along(rTaxon)) {results[matching_rows[j], "True_4States"] <- trait_data[rTaxon[j], 4]}
-    
+
     # Call the count data and sort it into a vector
     count_name <- paste0("Random/Data/Random.", i, ".Counts.txt")
     counts <- read.table(count_name, skip = 1)
     count_vector <- c(counts[1, 2], counts[2, 2], counts[1, 3], counts[2, 3])
-    
+
     # Remove the unknown taxa and store it for later
     truestate_vector <- results[matching_rows, "True_4States"]
     for (j in seq_along(rTaxon)) {count_vector[truestate_vector[j]] <- count_vector[truestate_vector[j]] - 1}
     results[trial_i, c("n00", "n01", "n10", "n11")] <- count_vector
   }
-  
+
   # Finally, write the matrix somewhere it can be accessed later
   results_name <- "Results/Random/Random.Multiple.ResultsFull.txt"
   write.table(results, file = results_name, quote = F, sep = "\t", row.names = F, col.names = T)
@@ -506,40 +506,40 @@ if (clade_prediction == TRUE) {
   unknown_info <- read.table(unknown_name, skip = 1, col.names = unknown_labels)
   row_num <- nrow(unknown_info)
   full_data_path <- "Random/Data/Random"
-  
+
   # Next, create the new section of the results matrix
   matrix_b <- matrix(data=NA, nrow = row_num, ncol = new_col_number)
   colnames(matrix_b) <- new_col_names
-  
+
   # Combine the unknown information with the new space for results
   results <- cbind(unknown_info, matrix_b)
-  
+
   # Fill in the counts data that has already by calculated
   for (i in 1:trial_amount) {
     # Find the rows that match the trial number
     trial_i <- which(results[, 1] == i)
     matching_rows <- which(results[, "Trial"] == i)
-    
+
     # Pull the true state data
     full_data_name <- paste0(full_data_path, ".", i, ".Full_data.txt")
     trait_data <- read.table(full_data_name, skip = 1, sep = "\t")
     trait_data[,4] <- match(trait_data[,4], c(0,1,10,11))
-    
+
     # Put the 4-state character into the results matrix
     rTaxon <- results[matching_rows, "rTaxon"]
     for (j in seq_along(rTaxon)) {results[matching_rows[j], "True_4States"] <- trait_data[rTaxon[j], 4]}
-    
+
     # Call the count data and sort it into a vector
     count_name <- paste0("Random/Data/Random.", i, ".Counts.txt")
     counts <- read.table(count_name, skip = 1)
     count_vector <- c(counts[1, 2], counts[2, 2], counts[1, 3], counts[2, 3])
-    
+
     # Remove the unknown taxa and store it for later
     truestate_vector <- results[matching_rows, "True_4States"]
     for (j in seq_along(rTaxon)) {count_vector[truestate_vector[j]] <- count_vector[truestate_vector[j]] - 1}
     results[trial_i, c("n00", "n01", "n10", "n11")] <- count_vector
   }
-  
+
   # Finally, write the matrix somewhere it can be accessed later
   results_name <- "Results/Random/Random.Clade.ResultsFull.txt"
   write.table(results, file = results_name, quote = F, sep = "\t", row.names = F, col.names = T)

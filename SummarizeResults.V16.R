@@ -95,19 +95,19 @@ for (i in 1:length(types)) {
   data_name <- paste0(path, type, ".Single.ResultsFull.txt")
   colnames_data <- strsplit(readLines(data_name, n = 1), "\t")[[1]]
   data <- read.table(data_name, skip = 1, sep = "\t", col.names = colnames_data)
-  
+
   # Identify columns ending in "_acc" or "_LL"
   target_cols <- grep("(_acc|_LL)$", colnames(data), value = TRUE)
-  
+
   # Take the mean of each of these columns
   col_means <- colMeans(data[, target_cols, drop = FALSE], na.rm = TRUE)
-  
+
   # Take the median of the state distributions as well
   CR.Tip[i, n_labels[1]] <- median(data[, n_cols[1]], na.rm = TRUE)
   CR.Tip[i, n_labels[2]] <- median(data[, n_cols[2]], na.rm = TRUE)
   CR.Tip[i, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
   CR.Tip[i, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
-  
+
   # Append the column names and data to include the matrix
   CR.Tip[i, 1] <- type
   CR.Tip[i, target_cols] <- col_means
@@ -133,7 +133,7 @@ CR.Tip[random_index, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
 CR.Tip[random_index, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
 
 # Save the table
-write.table(CR.Tip, file = "Results/SummarizedResults.CR.Tip.txt", sep = "\t", 
+write.table(CR.Tip, file = "Results/SummarizedResults.CR.Tip.txt", sep = "\t",
             row.names = F, col.names = T, quote = F)
 
 
@@ -145,25 +145,25 @@ if (isTRUE(variable_rates)) {
 
   # Get the results path
   path <- "Results/VariableRates/Single/"
-  
+
   for (i in 1:length(types)) {
     type <- types[i]
     data_name <- paste0(path, type, ".Single.ResultsFull.txt")
     colnames_data <- strsplit(readLines(data_name, n = 1), "\t")[[1]]
     data <- read.table(data_name, skip = 1, sep = "\t", col.names = colnames_data)
-    
+
     # Identify columns ending in "_acc" or "_LL"
     target_cols <- grep("(_acc|_LL)$", colnames(data), value = TRUE)
-    
+
     # Take the mean of each of these columns
     col_means <- colMeans(data[, target_cols, drop = FALSE], na.rm = TRUE)
-    
+
     # Take the median of the state distributions as well
     VR.Tip[i, n_labels[1]] <- median(data[, n_cols[1]], na.rm = TRUE)
     VR.Tip[i, n_labels[2]] <- median(data[, n_cols[2]], na.rm = TRUE)
     VR.Tip[i, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
     VR.Tip[i, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
-    
+
     # Append the column names and data to include the matrix
     VR.Tip[i, 1] <- type
     VR.Tip[i, target_cols] <- col_means
@@ -172,13 +172,13 @@ if (isTRUE(variable_rates)) {
   data_name <- paste0("Results/Random/Random.Single.ResultsFull.txt")
   colnames_data <- strsplit(readLines(data_name, n = 1), "\t")[[1]]
   data <- read.table(data_name, skip = 1, sep = "\t", col.names = colnames_data)
-  
+
   # Identify columns ending in "_acc" or "_LL"
   target_cols <- grep("(_acc|_LL)$", colnames(data), value = TRUE)
-  
+
   # Take the mean of each of these columns
   col_means <- colMeans(data[, target_cols, drop = FALSE], na.rm = TRUE)
-  
+
   # Append the column names and data to include the matrix
   random_index <- nrow(VR.Tip)
   VR.Tip[random_index, 1] <- "Random"
@@ -187,9 +187,9 @@ if (isTRUE(variable_rates)) {
   VR.Tip[random_index, n_labels[2]] <- median(data[, n_cols[2]], na.rm = TRUE)
   VR.Tip[random_index, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
   VR.Tip[random_index, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
-  
+
   # Save the table
-  write.table(VR.Tip, file = "Results/SummarizedResults.VR.Tip.txt", sep = "\t", 
+  write.table(VR.Tip, file = "Results/SummarizedResults.VR.Tip.txt", sep = "\t",
               row.names = F, col.names = T, quote = F)
 }
 
@@ -200,28 +200,28 @@ if (isTRUE(variable_rates)) {
 if (isTRUE(multiple_prediction)) {
   # Begin summarizing with Constant Rates, Multiple Prediction
   CR.Multi <- summary_blank
-  
+
   # Get the results path
   path <- "Results/ConstantRates/Multiple/"
-  
+
   for (i in 1:length(types)) {
     type <- types[i]
     data_name <- paste0(path, type, ".Multiple.ResultsFull.txt")
     colnames_data <- strsplit(readLines(data_name, n = 1), "\t")[[1]]
     data <- read.table(data_name, skip = 1, sep = "\t", col.names = colnames_data)
-    
+
     # Identify columns ending in "_acc" or "_LL"
     target_cols <- grep("(_acc|_LL)$", colnames(data), value = TRUE)
-    
+
     # Take the mean of each of these columns
     col_means <- colMeans(data[, target_cols, drop = FALSE], na.rm = TRUE)
-    
+
     # Take the median of the state distributions as well
     CR.Multi[i, n_labels[1]] <- median(data[, n_cols[1]], na.rm = TRUE)
     CR.Multi[i, n_labels[2]] <- median(data[, n_cols[2]], na.rm = TRUE)
     CR.Multi[i, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
     CR.Multi[i, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
-    
+
     # Append the column names and data to include the matrix
     CR.Multi[i, 1] <- type
     CR.Multi[i, target_cols] <- col_means
@@ -230,13 +230,13 @@ if (isTRUE(multiple_prediction)) {
   data_name <- paste0("Results/Random/Random.Multiple.ResultsFull.txt")
   colnames_data <- strsplit(readLines(data_name, n = 1), "\t")[[1]]
   data <- read.table(data_name, skip = 1, sep = "\t", col.names = colnames_data)
-  
+
   # Identify columns ending in "_acc" or "_LL"
   target_cols <- grep("(_acc|_LL)$", colnames(data), value = TRUE)
-  
+
   # Take the mean of each of these columns
   col_means <- colMeans(data[, target_cols, drop = FALSE], na.rm = TRUE)
-  
+
   # Append the column names and data to include the matrix
   random_index <- nrow(CR.Multi)
   CR.Multi[random_index, 1] <- "Random"
@@ -245,39 +245,39 @@ if (isTRUE(multiple_prediction)) {
   CR.Multi[random_index, n_labels[2]] <- median(data[, n_cols[2]], na.rm = TRUE)
   CR.Multi[random_index, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
   CR.Multi[random_index, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
-  
+
   # Save the table
-  write.table(CR.Multi, file = "Results/SummarizedResults.CR.Multiple.txt", sep = "\t", 
+  write.table(CR.Multi, file = "Results/SummarizedResults.CR.Multiple.txt", sep = "\t",
               row.names = F, col.names = T, quote = F)
-  
-  
-  
+
+
+
 #####
   # Now Variable Rates, if run
   if (isTRUE(variable_rates)) {
     VR.Multi <- summary_blank
-    
+
     # Get the results path
     path <- "Results/VariableRates/Multiple/"
-    
+
     for (i in 1:length(types)) {
       type <- types[i]
       data_name <- paste0(path, type, ".Multiple.ResultsFull.txt")
       colnames_data <- strsplit(readLines(data_name, n = 1), "\t")[[1]]
       data <- read.table(data_name, skip = 1, sep = "\t", col.names = colnames_data)
-      
+
       # Identify columns ending in "_acc" or "_LL"
       target_cols <- grep("(_acc|_LL)$", colnames(data), value = TRUE)
-      
+
       # Take the mean of each of these columns
       col_means <- colMeans(data[, target_cols, drop = FALSE], na.rm = TRUE)
-      
+
       # Take the median of the state distributions as well
       VR.Multi[i, n_labels[1]] <- median(data[, n_cols[1]], na.rm = TRUE)
       VR.Multi[i, n_labels[2]] <- median(data[, n_cols[2]], na.rm = TRUE)
       VR.Multi[i, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
       VR.Multi[i, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
-      
+
       # Append the column names and data to include the matrix
       VR.Multi[i, 1] <- type
       VR.Multi[i, target_cols] <- col_means
@@ -286,13 +286,13 @@ if (isTRUE(multiple_prediction)) {
     data_name <- paste0("Results/Random/Random.Multiple.ResultsFull.txt")
     colnames_data <- strsplit(readLines(data_name, n = 1), "\t")[[1]]
     data <- read.table(data_name, skip = 1, sep = "\t", col.names = colnames_data)
-    
+
     # Identify columns ending in "_acc" or "_LL"
     target_cols <- grep("(_acc|_LL)$", colnames(data), value = TRUE)
-    
+
     # Take the mean of each of these columns
     col_means <- colMeans(data[, target_cols, drop = FALSE], na.rm = TRUE)
-    
+
     # Append the column names and data to include the matrix
     random_index <- nrow(VR.Multi)
     VR.Multi[random_index, 1] <- "Random"
@@ -301,9 +301,9 @@ if (isTRUE(multiple_prediction)) {
     VR.Multi[random_index, n_labels[2]] <- median(data[, n_cols[2]], na.rm = TRUE)
     VR.Multi[random_index, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
     VR.Multi[random_index, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
-    
+
     # Save the table
-    write.table(VR.Multi, file = "Results/SummarizedResults.VR.Multiple.txt", sep = "\t", 
+    write.table(VR.Multi, file = "Results/SummarizedResults.VR.Multiple.txt", sep = "\t",
                 row.names = F, col.names = T, quote = F)
   }
 }
@@ -315,28 +315,28 @@ if (isTRUE(multiple_prediction)) {
 if (isTRUE(clade_prediction)) {
   # Begin summarizing with Constant Rates
   CR.Clade <- summary_blank
-  
+
   # Get the results path
   path <- "Results/ConstantRates/Clade/"
-  
+
   for (i in 1:length(types)) {
     type <- types[i]
     data_name <- paste0(path, type, ".Clade.ResultsFull.txt")
     colnames_data <- strsplit(readLines(data_name, n = 1), "\t")[[1]]
     data <- read.table(data_name, skip = 1, sep = "\t", col.names = colnames_data)
-    
+
     # Identify columns ending in "_acc" or "_LL"
     target_cols <- grep("(_acc|_LL)$", colnames(data), value = TRUE)
-    
+
     # Take the mean of each of these columns
     col_means <- colMeans(data[, target_cols, drop = FALSE], na.rm = TRUE)
-    
+
     # Take the median of the state distributions as well
     CR.Clade[i, n_labels[1]] <- median(data[, n_cols[1]], na.rm = TRUE)
     CR.Clade[i, n_labels[2]] <- median(data[, n_cols[2]], na.rm = TRUE)
     CR.Clade[i, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
     CR.Clade[i, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
-    
+
     # Append the column names and data to include the matrix
     CR.Clade[i, 1] <- type
     CR.Clade[i, target_cols] <- col_means
@@ -345,13 +345,13 @@ if (isTRUE(clade_prediction)) {
   data_name <- paste0("Results/Random/Random.Clade.ResultsFull.txt")
   colnames_data <- strsplit(readLines(data_name, n = 1), "\t")[[1]]
   data <- read.table(data_name, skip = 1, sep = "\t", col.names = colnames_data)
-  
+
   # Identify columns ending in "_acc" or "_LL"
   target_cols <- grep("(_acc|_LL)$", colnames(data), value = TRUE)
-  
+
   # Take the mean of each of these columns
   col_means <- colMeans(data[, target_cols, drop = FALSE], na.rm = TRUE)
-  
+
   # Append the column names and data to include the matrix
   random_index <- nrow(CR.Clade)
   CR.Clade[random_index, 1] <- "Random"
@@ -360,39 +360,39 @@ if (isTRUE(clade_prediction)) {
   CR.Clade[random_index, n_labels[2]] <- median(data[, n_cols[2]], na.rm = TRUE)
   CR.Clade[random_index, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
   CR.Clade[random_index, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
-  
+
   # Save the table
-  write.table(CR.Clade, file = "Results/SummarizedResults.CR.Clade.txt", sep = "\t", 
+  write.table(CR.Clade, file = "Results/SummarizedResults.CR.Clade.txt", sep = "\t",
               row.names = F, col.names = T, quote = F)
-  
-  
-  
+
+
+
   #####
   # Now Variable Rates, if run
   if (isTRUE(variable_rates)) {
     VR.Clade <- summary_blank
-    
+
     # Get the results path
     path <- "Results/VariableRates/Clade/"
-    
+
     for (i in 1:length(types)) {
       type <- types[i]
       data_name <- paste0(path, type, ".Clade.ResultsFull.txt")
       colnames_data <- strsplit(readLines(data_name, n = 1), "\t")[[1]]
       data <- read.table(data_name, skip = 1, sep = "\t", col.names = colnames_data)
-      
+
       # Identify columns ending in "_acc" or "_LL"
       target_cols <- grep("(_acc|_LL)$", colnames(data), value = TRUE)
-      
+
       # Take the mean of each of these columns
       col_means <- colMeans(data[, target_cols, drop = FALSE], na.rm = TRUE)
-      
+
       # Take the median of the state distributions as well
       VR.Clade[i, n_labels[1]] <- median(data[, n_cols[1]], na.rm = TRUE)
       VR.Clade[i, n_labels[2]] <- median(data[, n_cols[2]], na.rm = TRUE)
       VR.Clade[i, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
       VR.Clade[i, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
-      
+
       # Append the column names and data to include the matrix
       VR.Clade[i, 1] <- type
       VR.Clade[i, target_cols] <- col_means
@@ -401,13 +401,13 @@ if (isTRUE(clade_prediction)) {
     data_name <- paste0("Results/Random/Random.Clade.ResultsFull.txt")
     colnames_data <- strsplit(readLines(data_name, n = 1), "\t")[[1]]
     data <- read.table(data_name, skip = 1, sep = "\t", col.names = colnames_data)
-    
+
     # Identify columns ending in "_acc" or "_LL"
     target_cols <- grep("(_acc|_LL)$", colnames(data), value = TRUE)
-    
+
     # Take the mean of each of these columns
     col_means <- colMeans(data[, target_cols, drop = FALSE], na.rm = TRUE)
-    
+
     # Append the column names and data to include the matrix
     random_index <- nrow(VR.Clade)
     VR.Clade[random_index, 1] <- "Random"
@@ -416,9 +416,9 @@ if (isTRUE(clade_prediction)) {
     VR.Clade[random_index, n_labels[2]] <- median(data[, n_cols[2]], na.rm = TRUE)
     VR.Clade[random_index, n_labels[3]] <- median(data[, n_cols[3]], na.rm = TRUE)
     VR.Clade[random_index, n_labels[4]] <- median(data[, n_cols[4]], na.rm = TRUE)
-    
+
     # Save the table
-    write.table(VR.Clade, file = "Results/SummarizedResults.VR.Clade.txt", sep = "\t", 
+    write.table(VR.Clade, file = "Results/SummarizedResults.VR.Clade.txt", sep = "\t",
                 row.names = F, col.names = T, quote = F)
   }
 }

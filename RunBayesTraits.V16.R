@@ -224,18 +224,18 @@ print("Finished BayesTraits runs for Random Data, Single Prediction.")
 
 
 
-  
+
 ### This is for Multiple Prediction
 if (isTRUE(multiple_prediction)) {
   # Now we do all of the trials, starting with Constant Rates, Single Prediction
   print("Starting BayesTraits runs for Constant Rates, Multiple Prediction.")
   # Start cluster
   cl <- makeCluster(detectCores() - 1)
-  
+
   # Export needed functions and objects
   clusterExport(cl, c("run_rates", "run_prediction", "run_bayestraits"))
   clusterExport(cl, c("RJmodel", "multistate_prediction", "combinations", "bt_path"))
-  
+
   # # Run the rates for BayesTraits in parallel to maximize speed
   # results <- parLapply(
   #   cl,
@@ -252,8 +252,8 @@ if (isTRUE(multiple_prediction)) {
   #     )
   #   }
   # )
-  
-  
+
+
   # Run the prediction for BayesTraits in parallel to maximize speed
   results <- parLapply(
     cl,
@@ -273,20 +273,20 @@ if (isTRUE(multiple_prediction)) {
   # Stop the cluster to let your computer breathe
   stopCluster(cl)
   print("Finished BayesTraits runs for Constant Rates, Multiple Prediction.")
-  
-  
-  
-  
+
+
+
+
   ### This is for multiple, random prediction
   print("Starting BayesTraits runs for Random Data, Multiple Prediction.")
   # Start the cluster
   cl <- makeCluster(n_cores)
-  
+
   # Export needed functions and objects
   clusterExport(cl, c("run_rates", "run_prediction", "run_bayestraits"))
   clusterExport(cl, c("RJmodel", "multistate_prediction", "bt_path"))
-  
-  
+
+
   # Run the rates for BayesTraits in parallel to maximize speed
   results <- parLapply(
     cl,
@@ -301,7 +301,7 @@ if (isTRUE(multiple_prediction)) {
       )
     }
   )
-  
+
   # Run the prediction for BayesTraits in parallel to maximize speed
   results <- parLapply(
     cl,
@@ -319,20 +319,20 @@ if (isTRUE(multiple_prediction)) {
   # Stop cluster
   stopCluster(cl)
   print("Finished BayesTraits runs for Random Data, Multiple Prediction.")
-  
-  
-  
-  
+
+
+
+
   ### This checks and runs variable rates, multiple prediction if necessary
   if (isTRUE(variable_rates)) {
     print("Starting BayesTraits runs for Variable Rates, Multiple Prediction.")
     # Start cluster
     cl <- makeCluster(detectCores() - 1)
-    
+
     # Export needed functions and objects
     clusterExport(cl, c("run_rates", "run_prediction", "run_bayestraits"))
     clusterExport(cl, c("RJmodel", "multistate_prediction", "combinations", "bt_path"))
-    
+
     # Run the rates for BayesTraits in parallel to maximize speed
     results <- parLapply(
       cl,
@@ -349,8 +349,8 @@ if (isTRUE(multiple_prediction)) {
         )
       }
     )
-    
-    
+
+
     # Run the prediction for BayesTraits in parallel to maximize speed
     results <- parLapply(
       cl,
@@ -382,11 +382,11 @@ if (isTRUE(multiple_prediction)) {
 #   print("Starting BayesTraits runs for Constant Rates, Clade Prediction.")
 #   # Start cluster
 #   cl <- makeCluster(detectCores() - 1)
-  
+
 #   # Export needed functions and objects
 #   clusterExport(cl, c("run_rates", "run_prediction", "run_bayestraits"))
 #   clusterExport(cl, c("RJmodel", "multistate_prediction", "combinations", "bt_path"))
-  
+
 #   # Run the rates for BayesTraits in parallel to maximize speed
 #   results <- parLapply(
 #     cl,
@@ -403,8 +403,8 @@ if (isTRUE(multiple_prediction)) {
 #       )
 #     }
 #   )
-  
-  
+
+
 #   # Run the prediction for BayesTraits in parallel to maximize speed
 #   results <- parLapply(
 #     cl,
@@ -424,20 +424,20 @@ if (isTRUE(multiple_prediction)) {
 #   # Stop the cluster to let your computer breathe
 #   stopCluster(cl)
 #   print("Finished BayesTraits runs for Constant Rates, Clade Prediction.")
-  
-  
-  
-  
+
+
+
+
 #   ### This is for clade, random prediction
 #   print("Starting BayesTraits runs for Random Data, Clade Prediction.")
 #   # Start the cluster
 #   cl <- makeCluster(n_cores)
-  
+
 #   # Export needed functions and objects
 #   clusterExport(cl, c("run_rates", "run_prediction", "run_bayestraits"))
 #   clusterExport(cl, c("RJmodel", "multistate_prediction", "bt_path"))
-  
-  
+
+
 #   # Run the rates for BayesTraits in parallel to maximize speed
 #   results <- parLapply(
 #     cl,
@@ -452,7 +452,7 @@ if (isTRUE(multiple_prediction)) {
 #       )
 #     }
 #   )
-  
+
 #   # Run the prediction for BayesTraits in parallel to maximize speed
 #   results <- parLapply(
 #     cl,
@@ -470,20 +470,20 @@ if (isTRUE(multiple_prediction)) {
 #   # Stop cluster
 #   stopCluster(cl)
 #   print("Finished BayesTraits runs for Random Data, Clade Prediction.")
-  
-  
-  
-  
+
+
+
+
 #   ### This checks and runs variable rates, clade prediction if necessary
 #   if (isTRUE(variable_rates)) {
 #     print("Starting BayesTraits runs for Variable Rates, Clade Prediction.")
 #     # Start cluster
 #     cl <- makeCluster(detectCores() - 1)
-    
+
 #     # Export needed functions and objects
 #     clusterExport(cl, c("run_rates", "run_prediction", "run_bayestraits"))
 #     clusterExport(cl, c("RJmodel", "multistate_prediction", "combinations", "bt_path"))
-    
+
 #     # Run the rates for BayesTraits in parallel to maximize speed
 #     results <- parLapply(
 #       cl,
@@ -500,8 +500,8 @@ if (isTRUE(multiple_prediction)) {
 #         )
 #       }
 #     )
-    
-    
+
+
 #     # Run the prediction for BayesTraits in parallel to maximize speed
 #     results <- parLapply(
 #       cl,

@@ -35,22 +35,22 @@ for (type in types) {
   output_path <- paste0("ConstantRates/", type, "/Single/", type)
   unknown_name <- paste0(output_path, ".Unknown_info.txt")
   unknown_info <- read.table(unknown_name, skip = 1)
-  colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")  
-  
-  # Loop through the individual trials  
+  colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")
+
+  # Loop through the individual trials
   for (i in 1:trial_amount) {
     # Call the data for this trial
     dataname <- paste0("ConstantRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
     full_data <- read.table(dataname, skip = 1)
     colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
-    
+
     # Call the unknown taxon
     rTaxon <- as.numeric(unknown_info[i, 2])
-    
+
     # Create the data tables to use in BayesTraits
     edit_data(i, rTaxon, full_data, output_path)
-    
-    
+
+
     # Now we will write the necessary instructions for BayesTraits
     if (RJmodel %in% c("MCMC", "BOTH")) {
       # These lines write the instructions for non-RJ BayesTraits runs, if necessary.
@@ -68,14 +68,14 @@ for (type in types) {
       #Last, the prediction settings for the dependent run.
       Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = FALSE, output_path)
     }
-    
+
     # These lines write the RJ BayesTraits runs.
     if (RJmodel %in% c("RJMCMC", "BOTH")) {
       # These lines write the multistate prediction instructions, if necessary.
       if (multistate_prediction == TRUE) {
         Multistate_Settings(i, FirstRun = TRUE, RJ = TRUE, output_path)
         Multistate_Settings(i, FirstRun = FALSE, RJ = TRUE, output_path)
-      }     
+      }
       #First, the rate calculation for the independent run.
       Bayes_Settings(i, FirstRun = TRUE, IndependentCharacters = TRUE, RJ = TRUE, output_path)
       #Second, the rate calculation for the dependent run.
@@ -86,29 +86,29 @@ for (type in types) {
       Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = TRUE, output_path)
     }
   }
-  
+
 ### Now, we double back if we are testing variable rates
   if (variable_rates == TRUE) {
     # Clarify the paths to the data and outputs
     output_path <- paste0("VariableRates/", type, "/Single/", type)
     unknown_name <- paste0(output_path, ".Unknown_info.txt")
     unknown_info <- read.table(unknown_name, skip = 1)
-    colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")  
-    
-    # Loop through the individual trials  
+    colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")
+
+    # Loop through the individual trials
     for (i in 1:trial_amount) {
       # Call the data for this trial
       dataname <- paste0("VariableRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
       full_data <- read.table(dataname, skip = 1)
       colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
-      
+
       # Call the unknown taxon
       rTaxon <- as.numeric(unknown_info[i, 2])
-      
+
       # Create the data tables to use in BayesTraits
       edit_data(i, rTaxon, full_data, output_path)
-      
-      
+
+
       # Now we will write the necessary instructions for BayesTraits
       if (RJmodel %in% c("MCMC", "BOTH")) {
         # These lines write the instructions for non-RJ BayesTraits runs, if necessary.
@@ -126,14 +126,14 @@ for (type in types) {
         #Last, the prediction settings for the dependent run.
         Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = FALSE, output_path)
       }
-      
+
       # These lines write the RJ BayesTraits runs.
       if (RJmodel %in% c("RJMCMC", "BOTH")) {
         # These lines write the multistate prediction instructions, if necessary.
         if (multistate_prediction == TRUE) {
           Multistate_Settings(i, FirstRun = TRUE, RJ = TRUE, output_path)
           Multistate_Settings(i, FirstRun = FALSE, RJ = TRUE, output_path)
-        }     
+        }
         #First, the rate calculation for the independent run.
         Bayes_Settings(i, FirstRun = TRUE, IndependentCharacters = TRUE, RJ = TRUE, output_path)
         #Second, the rate calculation for the dependent run.
@@ -154,22 +154,22 @@ for (type in types) {
 output_path <- "Random/Single/Random"
 unknown_name <- paste0(output_path, ".Unknown_info.txt")
 unknown_info <- read.table(unknown_name, skip = 1)
-colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")  
+colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")
 
-# Loop through the individual trials  
+# Loop through the individual trials
 for (i in 1:trial_amount) {
   # Call the data for this trial
   dataname <- paste0("Random/Data/Random.", i, ".Full_data.txt")
   full_data <- read.table(dataname, skip = 1)
   colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
-  
+
   # Call the unknown taxon
   rTaxon <- as.numeric(unknown_info[i, 2])
-  
+
   # Create the data tables to use in BayesTraits
   edit_data(i, rTaxon, full_data, output_path)
-  
-  
+
+
   # Now we will write the necessary instructions for BayesTraits
   if (RJmodel %in% c("MCMC", "BOTH")) {
     # These lines write the instructions for non-RJ BayesTraits runs, if necessary.
@@ -187,14 +187,14 @@ for (i in 1:trial_amount) {
     #Last, the prediction settings for the dependent run.
     Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = FALSE, output_path)
   }
-  
+
   # These lines write the RJ BayesTraits runs.
   if (RJmodel %in% c("RJMCMC", "BOTH")) {
     # These lines write the multistate prediction instructions, if necessary.
     if (multistate_prediction == TRUE) {
       Multistate_Settings(i, FirstRun = TRUE, RJ = TRUE, output_path)
       Multistate_Settings(i, FirstRun = FALSE, RJ = TRUE, output_path)
-    }     
+    }
     #First, the rate calculation for the independent run.
     Bayes_Settings(i, FirstRun = TRUE, IndependentCharacters = TRUE, RJ = TRUE, output_path)
     #Second, the rate calculation for the dependent run.
@@ -216,25 +216,25 @@ if (multiple_prediction == TRUE) {
     output_path <- paste0("ConstantRates/", type, "/Multiple/", type)
     unknown_name <- paste0(output_path, ".Unknown_info.txt")
     unknown_info <- read.table(unknown_name, skip = 1)
-    colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")  
-    
-    # Loop through the individual trials  
+    colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")
+
+    # Loop through the individual trials
     for (i in 1:trial_amount) {
       # Call the data for this trial
       dataname <- paste0("ConstantRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
       full_data <- read.table(dataname, skip = 1)
       colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
-      
+
       # Call the unknown taxon by subsetting the rows where column 1 matches i
       matching_rows <- which(unknown_info[, 1] == i)
-      
+
       # Extract the values from column 2 in those rows
       rTaxon <- unknown_info[matching_rows, 2]
-      
+
       # Create the data tables to use in BayesTraits
       edit_data(i, rTaxon, full_data, output_path)
-      
-      
+
+
       # Now we will write the necessary instructions for BayesTraits
       if (RJmodel %in% c("MCMC", "BOTH")) {
         # These lines write the instructions for non-RJ BayesTraits runs, if necessary.
@@ -252,14 +252,14 @@ if (multiple_prediction == TRUE) {
         #Last, the prediction settings for the dependent run.
         Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = FALSE, output_path)
       }
-      
+
       # These lines write the RJ BayesTraits runs.
       if (RJmodel %in% c("RJMCMC", "BOTH")) {
         # These lines write the multistate prediction instructions, if necessary.
         if (multistate_prediction == TRUE) {
           Multistate_Settings(i, FirstRun = TRUE, RJ = TRUE, output_path)
           Multistate_Settings(i, FirstRun = FALSE, RJ = TRUE, output_path)
-        }     
+        }
         #First, the rate calculation for the independent run.
         Bayes_Settings(i, FirstRun = TRUE, IndependentCharacters = TRUE, RJ = TRUE, output_path)
         #Second, the rate calculation for the dependent run.
@@ -270,33 +270,33 @@ if (multiple_prediction == TRUE) {
         Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = TRUE, output_path)
       }
     }
-    
-    
+
+
     ### Now, we double back if we are testing variable rates
     if (variable_rates == TRUE) {
       # Clarify the paths to the data and outputs
       output_path <- paste0("VariableRates/", type, "/Multiple/", type)
       unknown_name <- paste0(output_path, ".Unknown_info.txt")
       unknown_info <- read.table(unknown_name, skip = 1)
-      colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")  
-      
-      # Loop through the individual trials  
+      colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")
+
+      # Loop through the individual trials
       for (i in 1:trial_amount) {
         # Call the data for this trial
         dataname <- paste0("VariableRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
         full_data <- read.table(dataname, skip = 1)
         colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
-        
+
         # Call the unknown taxon by subsetting the rows where column 1 matches i
         matching_rows <- which(unknown_info[, 1] == i)
-        
+
         # Extract the values from column 2 in those rows
         rTaxon <- unknown_info[matching_rows, 2]
-        
+
         # Create the data tables to use in BayesTraits
         edit_data(i, rTaxon, full_data, output_path)
-        
-        
+
+
         # Now we will write the necessary instructions for BayesTraits
         if (RJmodel %in% c("MCMC", "BOTH")) {
           # These lines write the instructions for non-RJ BayesTraits runs, if necessary.
@@ -314,14 +314,14 @@ if (multiple_prediction == TRUE) {
           #Last, the prediction settings for the dependent run.
           Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = FALSE, output_path)
         }
-        
+
         # These lines write the RJ BayesTraits runs.
         if (RJmodel %in% c("RJMCMC", "BOTH")) {
           # These lines write the multistate prediction instructions, if necessary.
           if (multistate_prediction == TRUE) {
             Multistate_Settings(i, FirstRun = TRUE, RJ = TRUE, output_path)
             Multistate_Settings(i, FirstRun = FALSE, RJ = TRUE, output_path)
-          }     
+          }
           #First, the rate calculation for the independent run.
           Bayes_Settings(i, FirstRun = TRUE, IndependentCharacters = TRUE, RJ = TRUE, output_path)
           #Second, the rate calculation for the dependent run.
@@ -346,25 +346,25 @@ if (clade_prediction == TRUE) {
     output_path <- paste0("ConstantRates/", type, "/Clade/", type)
     unknown_name <- paste0(output_path, ".Unknown_info.txt")
     unknown_info <- read.table(unknown_name, skip = 1)
-    colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")  
-    
-    # Loop through the individual trials  
+    colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")
+
+    # Loop through the individual trials
     for (i in 1:trial_amount) {
       # Call the data for this trial
       dataname <- paste0("ConstantRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
       full_data <- read.table(dataname, skip = 1)
       colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
-      
+
       # Call the unknown taxon by subsetting the rows where column 1 matches i
       matching_rows <- which(unknown_info[, 1] == i)
-      
+
       # Extract the values from column 2 in those rows
       rTaxon <- unknown_info[matching_rows, 2]
-      
+
       # Create the data tables to use in BayesTraits
       edit_data(i, rTaxon, full_data, output_path)
-      
-      
+
+
       # Now we will write the necessary instructions for BayesTraits
       if (RJmodel %in% c("MCMC", "BOTH")) {
         # These lines write the instructions for non-RJ BayesTraits runs, if necessary.
@@ -382,14 +382,14 @@ if (clade_prediction == TRUE) {
         #Last, the prediction settings for the dependent run.
         Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = FALSE, output_path)
       }
-      
+
       # These lines write the RJ BayesTraits runs.
       if (RJmodel %in% c("RJMCMC", "BOTH")) {
         # These lines write the multistate prediction instructions, if necessary.
         if (multistate_prediction == TRUE) {
           Multistate_Settings(i, FirstRun = TRUE, RJ = TRUE, output_path)
           Multistate_Settings(i, FirstRun = FALSE, RJ = TRUE, output_path)
-        }     
+        }
         #First, the rate calculation for the independent run.
         Bayes_Settings(i, FirstRun = TRUE, IndependentCharacters = TRUE, RJ = TRUE, output_path)
         #Second, the rate calculation for the dependent run.
@@ -400,33 +400,33 @@ if (clade_prediction == TRUE) {
         Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = TRUE, output_path)
       }
     }
-    
-    
+
+
     ### Now, we double back if we are testing variable rates
     if (variable_rates == TRUE) {
       # Clarify the paths to the data and outputs
       output_path <- paste0("VariableRates/", type, "/Clade/", type)
       unknown_name <- paste0(output_path, ".Unknown_info.txt")
       unknown_info <- read.table(unknown_name, skip = 1)
-      colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")  
-      
-      # Loop through the individual trials  
+      colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")
+
+      # Loop through the individual trials
       for (i in 1:trial_amount) {
         # Call the data for this trial
         dataname <- paste0("VariableRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
         full_data <- read.table(dataname, skip = 1)
         colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
-        
+
         # Call the unknown taxon by subsetting the rows where column 1 matches i
         matching_rows <- which(unknown_info[, 1] == i)
-        
+
         # Extract the values from column 2 in those rows
         rTaxon <- unknown_info[matching_rows, 2]
-        
+
         # Create the data tables to use in BayesTraits
         edit_data(i, rTaxon, full_data, output_path)
-        
-        
+
+
         # Now we will write the necessary instructions for BayesTraits
         if (RJmodel %in% c("MCMC", "BOTH")) {
           # These lines write the instructions for non-RJ BayesTraits runs, if necessary.
@@ -444,14 +444,14 @@ if (clade_prediction == TRUE) {
           #Last, the prediction settings for the dependent run.
           Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = FALSE, output_path)
         }
-        
+
         # These lines write the RJ BayesTraits runs.
         if (RJmodel %in% c("RJMCMC", "BOTH")) {
           # These lines write the multistate prediction instructions, if necessary.
           if (multistate_prediction == TRUE) {
             Multistate_Settings(i, FirstRun = TRUE, RJ = TRUE, output_path)
             Multistate_Settings(i, FirstRun = FALSE, RJ = TRUE, output_path)
-          }     
+          }
           #First, the rate calculation for the independent run.
           Bayes_Settings(i, FirstRun = TRUE, IndependentCharacters = TRUE, RJ = TRUE, output_path)
           #Second, the rate calculation for the dependent run.
@@ -479,25 +479,25 @@ if (multiple_prediction == TRUE) {
   output_path <- "Random/Multiple/Random"
   unknown_name <- paste0(output_path, ".Unknown_info.txt")
   unknown_info <- read.table(unknown_name, skip = 1)
-  colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")  
-  
-  # Loop through the individual trials  
+  colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")
+
+  # Loop through the individual trials
   for (i in 1:trial_amount) {
     # Call the data for this trial
     dataname <- paste0("Random/Data/Random.", i, ".Full_data.txt")
     full_data <- read.table(dataname, skip = 1)
     colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
-    
+
     # Call the unknown taxon by subsetting the rows where column 1 matches i
     matching_rows <- which(unknown_info[, 1] == i)
-    
+
     # Extract the values from column 2 in those rows
     rTaxon <- unknown_info[matching_rows, 2]
-    
+
     # Create the data tables to use in BayesTraits
     edit_data(i, rTaxon, full_data, output_path)
-    
-    
+
+
     # Now we will write the necessary instructions for BayesTraits
     if (RJmodel %in% c("MCMC", "BOTH")) {
       # These lines write the instructions for non-RJ BayesTraits runs, if necessary.
@@ -515,14 +515,14 @@ if (multiple_prediction == TRUE) {
       #Last, the prediction settings for the dependent run.
       Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = FALSE, output_path)
     }
-    
+
     # These lines write the RJ BayesTraits runs.
     if (RJmodel %in% c("RJMCMC", "BOTH")) {
       # These lines write the multistate prediction instructions, if necessary.
       if (multistate_prediction == TRUE) {
         Multistate_Settings(i, FirstRun = TRUE, RJ = TRUE, output_path)
         Multistate_Settings(i, FirstRun = FALSE, RJ = TRUE, output_path)
-      }     
+      }
       #First, the rate calculation for the independent run.
       Bayes_Settings(i, FirstRun = TRUE, IndependentCharacters = TRUE, RJ = TRUE, output_path)
       #Second, the rate calculation for the dependent run.
@@ -543,25 +543,25 @@ if (clade_prediction == TRUE) {
   output_path <- "Random/Clade/Random"
   unknown_name <- paste0(output_path, ".Unknown_info.txt")
   unknown_info <- read.table(unknown_name, skip = 1)
-  colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")  
-  
-  # Loop through the individual trials  
+  colnames(unknown_info) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", "Branch_length")
+
+  # Loop through the individual trials
   for (i in 1:trial_amount) {
     # Call the data for this trial
     dataname <- paste0("Random/Data/Random.", i, ".Full_data.txt")
     full_data <- read.table(dataname, skip = 1)
     colnames(full_data) <- c("Taxon_#", "Trait_A", "Trait_B", "Class")
-    
+
     # Call the unknown taxon by subsetting the rows where column 1 matches i
     matching_rows <- which(unknown_info[, 1] == i)
-    
+
     # Extract the values from column 2 in those rows
     rTaxon <- unknown_info[matching_rows, 2]
-    
+
     # Create the data tables to use in BayesTraits
     edit_data(i, rTaxon, full_data, output_path)
-    
-    
+
+
     # Now we will write the necessary instructions for BayesTraits
     if (RJmodel %in% c("MCMC", "BOTH")) {
       # These lines write the instructions for non-RJ BayesTraits runs, if necessary.
@@ -579,14 +579,14 @@ if (clade_prediction == TRUE) {
       #Last, the prediction settings for the dependent run.
       Bayes_Settings(i, FirstRun = FALSE, IndependentCharacters = FALSE, RJ = FALSE, output_path)
     }
-    
+
     # These lines write the RJ BayesTraits runs.
     if (RJmodel %in% c("RJMCMC", "BOTH")) {
       # These lines write the multistate prediction instructions, if necessary.
       if (multistate_prediction == TRUE) {
         Multistate_Settings(i, FirstRun = TRUE, RJ = TRUE, output_path)
         Multistate_Settings(i, FirstRun = FALSE, RJ = TRUE, output_path)
-      }     
+      }
       #First, the rate calculation for the independent run.
       Bayes_Settings(i, FirstRun = TRUE, IndependentCharacters = TRUE, RJ = TRUE, output_path)
       #Second, the rate calculation for the dependent run.

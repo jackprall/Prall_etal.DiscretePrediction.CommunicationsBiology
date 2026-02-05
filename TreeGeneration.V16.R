@@ -32,21 +32,21 @@ lapply(required_packages, library, character.only = TRUE)
 for (i in 1:trial_amount) {
   # First, create a tree
   full_tree <- ape::rphylo(n = pop_size, birth = 1, death = 0)
-  
+
   # Change the tip labels to be easier to run the tests
   full_tree$tip.label <- seq_along(full_tree$tip.label)
-  
+
   # Next, we have to standardize the tree length
   # To do this, we first get the tree length
   treelength <- as.numeric(sum(full_tree$edge.length))
-  
+
   # Next, we standardize to a total tree length of 700 units
   std.lengths <- lapply(full_tree$edge.length, function(x) x * (700 / treelength))
-  
+
   #Now convert this list back to a numerical vector and replace the old branch lengths
   std.lengths <- as.numeric(unlist(std.lengths))
   full_tree$edge.length <- std.lengths
-  
+
   # Finally, we need to name, save, and assign this tree to use later
   tree_name <- paste0("Trees/Full_tree.", i, ".tre")
   write.nexus(full_tree, file = (tree_name))

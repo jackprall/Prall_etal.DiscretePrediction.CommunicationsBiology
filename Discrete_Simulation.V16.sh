@@ -4,7 +4,7 @@
 ## June 2025
 
 ################################################################################
-## Running the script below will test multiple phylogenetic and non-phylogenetic prediction models. 
+## Running the script below will test multiple phylogenetic and non-phylogenetic prediction models.
 ## This should be placed in a directory with the BayesTraits executable and a
 ## a directory 'Scripts' which houses the scripts below.
 
@@ -75,7 +75,7 @@ Rscript Scripts/FullDataGeneration.${sim_version}.R
 ## Run the scripts responsible for selecting the unknown taxa
 Rscript Scripts/SampleSingleTaxa.${sim_version}.R
 
-if [[ "$multiple_prediction" == "true" || "$clade_prediction" == "true" ]]; then 
+if [[ "$multiple_prediction" == "true" || "$clade_prediction" == "true" ]]; then
   Rscript Scripts/SampleMultipleTaxa.${sim_version}.R
 fi
 

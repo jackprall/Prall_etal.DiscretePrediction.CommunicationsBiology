@@ -94,11 +94,11 @@ for (type in types) {
   # Call the necessary paths
   logfile_path <- paste0("ConstantRates/", type, "/Single/", type)
   results_name <- paste0("Results/ConstantRates/Single/", type, ".Single.ResultsFull.txt")
-  
+
   # Pull the results into R
   colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
   results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-  
+
   # Start the for-loop that will run each prediction and fill it in
   for (i in 1:trial_amount) {
     # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -109,65 +109,65 @@ for (type in types) {
 
 ### This loop will cover any situations where rTaxon is more than one value
     for (j in 1:length(rTaxon)) {
-      
-      # Gather the information from 
+
+      # Gather the information from
       skiplength <- length(rTaxon)
       Calculate_Post_Prob(i, RJmodel, multistate_prediction, skiplength, j, trial_name = logfile_path)
-      
+
       # Use the RJmodel to pull the correct data
       if (RJmodel %in% c("MCMC", "BOTH")) {
         Ind.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Ind.MCMC.Prob)
         Dep.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Dep.MCMC.Prob)
-        
+
         Ind.MCMC.LL  <- LogLoss(rTaxonValueB[j], Ind.MCMC.Prob)
-        Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)    
-        
+        Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)
+
         if (isTRUE(multistate_prediction)) {
           MS.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], MS.MCMC.Prob)
           MS.MCMC.LL  <- LogLoss(rTaxonValueB[j], MS.MCMC.Prob)
-          
+
         }
       }
-      
+
       if (RJmodel %in% c("RJMCMC", "BOTH")) {
         Ind.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Ind.RJ.Prob)
         Dep.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Dep.RJ.Prob)
-        
+
         Ind.RJ.LL  <- LogLoss(rTaxonValueB[j], Ind.RJ.Prob)
-        Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)    
-        
+        Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)
+
         if (isTRUE(multistate_prediction)) {
           MS.RJ.acc <- calculate_accuracy(rTaxonValueB[j], MS.RJ.Prob)
           MS.RJ.LL  <- LogLoss(rTaxonValueB[j], MS.RJ.Prob)
         }
       }
-      
-      
+
+
       # Finally assign the variables to the final table based on the RJ model
       if (RJmodel %in% c("MCMC", "BOTH")) {
         MCMC_prob <- c(Ind.MCMC.Prob, Dep.MCMC.Prob)
         MCMC_acc  <- c(Ind.MCMC.acc, Dep.MCMC.acc)
         MCMC_LL   <- c(Ind.MCMC.LL,  Dep.MCMC.LL)
-        
+
         if (isTRUE(multistate_prediction)) {
           MCMC_prob <- c(MS.MCMC.Prob, MCMC_prob)
           MCMC_acc  <- c(MS.MCMC.acc,  MCMC_acc)
           MCMC_LL   <- c(MS.MCMC.LL,   MCMC_LL)
         }
       }
-      
+
       if (RJmodel %in% c("RJMCMC", "BOTH")) {
         RJ_prob <- c(Ind.RJ.Prob, Dep.RJ.Prob)
         RJ_acc  <- c(Ind.RJ.acc,  Dep.RJ.acc)
         RJ_LL   <- c(Ind.RJ.LL,   Dep.RJ.LL)
-        
+
         if (isTRUE(multistate_prediction)) {
           RJ_prob <- c(MS.RJ.Prob, RJ_prob)
           RJ_acc  <- c(MS.RJ.acc,  RJ_acc)
           RJ_LL   <- c(MS.RJ.LL,   RJ_LL)
         }
       }
-      
+
       if (RJmodel == "MCMC") {
         result_vector <- c(MCMC_prob, MCMC_acc, MCMC_LL)
       } else if (RJmodel == "RJMCMC") {
@@ -175,13 +175,13 @@ for (type in types) {
       } else if (RJmodel == "BOTH") {
         result_vector <- c(MCMC_prob, RJ_prob, MCMC_acc, RJ_acc, MCMC_LL, RJ_LL)
       }
-      
+
       # Assign results
       results[matching_rows[j], Results_labels] <- result_vector
-      
+
     }
   }
-  write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t") 
+  write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
 }
 
 
@@ -203,68 +203,68 @@ for (i in 1:trial_amount) {
   rTaxon <- results[matching_rows, "rTaxon"]
   rTaxonValueA <- results[matching_rows, "Trait_A"]
   rTaxonValueB <- results[matching_rows, "Trait_B"]
-  
+
   ### This loop will cover any situations where rTaxon is more than one value
   for (j in 1:length(rTaxon)) {
-    
-    # Gather the information from 
+
+    # Gather the information from
     skiplength <- length(rTaxon)
     Calculate_Post_Prob(i, RJmodel, multistate_prediction, skiplength, j, trial_name = logfile_path)
-    
+
     # Use the RJmodel to pull the correct data
     if (RJmodel %in% c("MCMC", "BOTH")) {
       Ind.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Ind.MCMC.Prob)
       Dep.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Dep.MCMC.Prob)
-      
+
       Ind.MCMC.LL  <- LogLoss(rTaxonValueB[j], Ind.MCMC.Prob)
-      Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)    
-      
+      Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)
+
       if (isTRUE(multistate_prediction)) {
         MS.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], MS.MCMC.Prob)
         MS.MCMC.LL  <- LogLoss(rTaxonValueB[j], MS.MCMC.Prob)
-        
+
       }
     }
-    
+
     if (RJmodel %in% c("RJMCMC", "BOTH")) {
       Ind.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Ind.RJ.Prob)
       Dep.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Dep.RJ.Prob)
-      
+
       Ind.RJ.LL  <- LogLoss(rTaxonValueB[j], Ind.RJ.Prob)
-      Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)    
-      
+      Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)
+
       if (isTRUE(multistate_prediction)) {
         MS.RJ.acc <- calculate_accuracy(rTaxonValueB[j], MS.RJ.Prob)
         MS.RJ.LL  <- LogLoss(rTaxonValueB[j], MS.RJ.Prob)
       }
     }
-    
-    
+
+
     # Finally assign the variables to the final table based on the RJ model
     if (RJmodel %in% c("MCMC", "BOTH")) {
       MCMC_prob <- c(Ind.MCMC.Prob, Dep.MCMC.Prob)
       MCMC_acc  <- c(Ind.MCMC.acc, Dep.MCMC.acc)
       MCMC_LL   <- c(Ind.MCMC.LL,  Dep.MCMC.LL)
-      
+
       if (isTRUE(multistate_prediction)) {
         MCMC_prob <- c(MS.MCMC.Prob, MCMC_prob)
         MCMC_acc  <- c(MS.MCMC.acc,  MCMC_acc)
         MCMC_LL   <- c(MS.MCMC.LL,   MCMC_LL)
       }
     }
-    
+
     if (RJmodel %in% c("RJMCMC", "BOTH")) {
       RJ_prob <- c(Ind.RJ.Prob, Dep.RJ.Prob)
       RJ_acc  <- c(Ind.RJ.acc,  Dep.RJ.acc)
       RJ_LL   <- c(Ind.RJ.LL,   Dep.RJ.LL)
-      
+
       if (isTRUE(multistate_prediction)) {
         RJ_prob <- c(MS.RJ.Prob, RJ_prob)
         RJ_acc  <- c(MS.RJ.acc,  RJ_acc)
         RJ_LL   <- c(MS.RJ.LL,   RJ_LL)
       }
     }
-    
+
     if (RJmodel == "MCMC") {
       result_vector <- c(MCMC_prob, MCMC_acc, MCMC_LL)
     } else if (RJmodel == "RJMCMC") {
@@ -272,13 +272,13 @@ for (i in 1:trial_amount) {
     } else if (RJmodel == "BOTH") {
       result_vector <- c(MCMC_prob, RJ_prob, MCMC_acc, RJ_acc, MCMC_LL, RJ_LL)
     }
-    
+
     # Assign results
     results[matching_rows[j], Results_labels] <- result_vector
-    
+
   }
 }
-write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t") 
+write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
 
 
 
@@ -290,11 +290,11 @@ if (isTRUE(variable_rates)) {
     # Call the necessary paths
     logfile_path <- paste0("VariableRates/", type, "/Single/", type)
     results_name <- paste0("Results/VariableRates/Single/", type, ".Single.ResultsFull.txt")
-    
+
     # Pull the results into R
     colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
     results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-    
+
     # Start the for-loop that will run each prediction and fill it in
     for (i in 1:trial_amount) {
       # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -302,68 +302,68 @@ if (isTRUE(variable_rates)) {
       rTaxon <- results[matching_rows, "rTaxon"]
       rTaxonValueA <- results[matching_rows, "Trait_A"]
       rTaxonValueB <- results[matching_rows, "Trait_B"]
-      
+
       ### This loop will cover any situations where rTaxon is more than one value
       for (j in 1:length(rTaxon)) {
-        
-        # Gather the information from 
+
+        # Gather the information from
         skiplength <- length(rTaxon)
         Calculate_Post_Prob(i, RJmodel, multistate_prediction, skiplength, j, trial_name = logfile_path)
-        
+
         # Use the RJmodel to pull the correct data
         if (RJmodel %in% c("MCMC", "BOTH")) {
           Ind.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Ind.MCMC.Prob)
           Dep.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Dep.MCMC.Prob)
-          
+
           Ind.MCMC.LL  <- LogLoss(rTaxonValueB[j], Ind.MCMC.Prob)
-          Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)    
-          
+          Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)
+
           if (isTRUE(multistate_prediction)) {
             MS.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], MS.MCMC.Prob)
             MS.MCMC.LL  <- LogLoss(rTaxonValueB[j], MS.MCMC.Prob)
-            
+
           }
         }
-        
+
         if (RJmodel %in% c("RJMCMC", "BOTH")) {
           Ind.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Ind.RJ.Prob)
           Dep.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Dep.RJ.Prob)
-          
+
           Ind.RJ.LL  <- LogLoss(rTaxonValueB[j], Ind.RJ.Prob)
-          Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)    
-          
+          Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)
+
           if (isTRUE(multistate_prediction)) {
             MS.RJ.acc <- calculate_accuracy(rTaxonValueB[j], MS.RJ.Prob)
             MS.RJ.LL  <- LogLoss(rTaxonValueB[j], MS.RJ.Prob)
           }
         }
-        
-        
+
+
         # Finally assign the variables to the final table based on the RJ model
         if (RJmodel %in% c("MCMC", "BOTH")) {
           MCMC_prob <- c(Ind.MCMC.Prob, Dep.MCMC.Prob)
           MCMC_acc  <- c(Ind.MCMC.acc, Dep.MCMC.acc)
           MCMC_LL   <- c(Ind.MCMC.LL,  Dep.MCMC.LL)
-          
+
           if (isTRUE(multistate_prediction)) {
             MCMC_prob <- c(MS.MCMC.Prob, MCMC_prob)
             MCMC_acc  <- c(MS.MCMC.acc,  MCMC_acc)
             MCMC_LL   <- c(MS.MCMC.LL,   MCMC_LL)
           }
         }
-        
+
         if (RJmodel %in% c("RJMCMC", "BOTH")) {
           RJ_prob <- c(Ind.RJ.Prob, Dep.RJ.Prob)
           RJ_acc  <- c(Ind.RJ.acc,  Dep.RJ.acc)
           RJ_LL   <- c(Ind.RJ.LL,   Dep.RJ.LL)
-          
+
           if (isTRUE(multistate_prediction)) {
             RJ_prob <- c(MS.RJ.Prob, RJ_prob)
             RJ_acc  <- c(MS.RJ.acc,  RJ_acc)
             RJ_LL   <- c(MS.RJ.LL,   RJ_LL)
           }
         }
-        
+
         if (RJmodel == "MCMC") {
           result_vector <- c(MCMC_prob, MCMC_acc, MCMC_LL)
         } else if (RJmodel == "RJMCMC") {
@@ -371,13 +371,13 @@ if (isTRUE(variable_rates)) {
         } else if (RJmodel == "BOTH") {
           result_vector <- c(MCMC_prob, RJ_prob, MCMC_acc, RJ_acc, MCMC_LL, RJ_LL)
         }
-        
+
         # Assign results
         results[matching_rows[j], Results_labels] <- result_vector
-        
+
       }
     }
-    write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t") 
+    write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
   }
 }
 
@@ -390,11 +390,11 @@ if (isTRUE(multiple_prediction)) {
     # Call the necessary paths
     logfile_path <- paste0("ConstantRates/", type, "/Multiple/", type)
     results_name <- paste0("Results/ConstantRates/Multiple/", type, ".Multiple.ResultsFull.txt")
-    
+
     # Pull the results into R
     colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
     results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-    
+
     # Start the for-loop that will run each prediction and fill it in
     for (i in 1:trial_amount) {
       # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -402,68 +402,68 @@ if (isTRUE(multiple_prediction)) {
       rTaxon <- results[matching_rows, "rTaxon"]
       rTaxonValueA <- results[matching_rows, "Trait_A"]
       rTaxonValueB <- results[matching_rows, "Trait_B"]
-      
+
       ### This loop will cover any situations where rTaxon is more than one value
       for (j in 1:length(rTaxon)) {
-        
-        # Gather the information from 
+
+        # Gather the information from
         skiplength <- length(rTaxon)
         Calculate_Post_Prob(i, RJmodel, multistate_prediction, skiplength, j, trial_name = logfile_path)
-        
+
         # Use the RJmodel to pull the correct data
         if (RJmodel %in% c("MCMC", "BOTH")) {
           Ind.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Ind.MCMC.Prob)
           Dep.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Dep.MCMC.Prob)
-          
+
           Ind.MCMC.LL  <- LogLoss(rTaxonValueB[j], Ind.MCMC.Prob)
-          Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)    
-          
+          Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)
+
           if (isTRUE(multistate_prediction)) {
             MS.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], MS.MCMC.Prob)
             MS.MCMC.LL  <- LogLoss(rTaxonValueB[j], MS.MCMC.Prob)
-            
+
           }
         }
-        
+
         if (RJmodel %in% c("RJMCMC", "BOTH")) {
           Ind.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Ind.RJ.Prob)
           Dep.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Dep.RJ.Prob)
-          
+
           Ind.RJ.LL  <- LogLoss(rTaxonValueB[j], Ind.RJ.Prob)
-          Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)    
-          
+          Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)
+
           if (isTRUE(multistate_prediction)) {
             MS.RJ.acc <- calculate_accuracy(rTaxonValueB[j], MS.RJ.Prob)
             MS.RJ.LL  <- LogLoss(rTaxonValueB[j], MS.RJ.Prob)
           }
         }
-        
-        
+
+
         # Finally assign the variables to the final table based on the RJ model
         if (RJmodel %in% c("MCMC", "BOTH")) {
           MCMC_prob <- c(Ind.MCMC.Prob, Dep.MCMC.Prob)
           MCMC_acc  <- c(Ind.MCMC.acc, Dep.MCMC.acc)
           MCMC_LL   <- c(Ind.MCMC.LL,  Dep.MCMC.LL)
-          
+
           if (isTRUE(multistate_prediction)) {
             MCMC_prob <- c(MS.MCMC.Prob, MCMC_prob)
             MCMC_acc  <- c(MS.MCMC.acc,  MCMC_acc)
             MCMC_LL   <- c(MS.MCMC.LL,   MCMC_LL)
           }
         }
-        
+
         if (RJmodel %in% c("RJMCMC", "BOTH")) {
           RJ_prob <- c(Ind.RJ.Prob, Dep.RJ.Prob)
           RJ_acc  <- c(Ind.RJ.acc,  Dep.RJ.acc)
           RJ_LL   <- c(Ind.RJ.LL,   Dep.RJ.LL)
-          
+
           if (isTRUE(multistate_prediction)) {
             RJ_prob <- c(MS.RJ.Prob, RJ_prob)
             RJ_acc  <- c(MS.RJ.acc,  RJ_acc)
             RJ_LL   <- c(MS.RJ.LL,   RJ_LL)
           }
         }
-        
+
         if (RJmodel == "MCMC") {
           result_vector <- c(MCMC_prob, MCMC_acc, MCMC_LL)
         } else if (RJmodel == "RJMCMC") {
@@ -471,27 +471,27 @@ if (isTRUE(multiple_prediction)) {
         } else if (RJmodel == "BOTH") {
           result_vector <- c(MCMC_prob, RJ_prob, MCMC_acc, RJ_acc, MCMC_LL, RJ_LL)
         }
-        
+
         # Assign results
         results[matching_rows[j], Results_labels] <- result_vector
-        
+
       }
     }
-    write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t") 
+    write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
   }
-  
-  
-  
+
+
+
   ### Now we will do the same for the randomly generated data
   print(paste0("Compiling the BayesTraits results from the multiple-prediction, tests with random data."))
   # Call the necessary paths
   logfile_path <- "Random/Multiple/Random"
   results_name <- "Results/Random/Random.Multiple.ResultsFull.txt"
-  
+
   # Pull the results into R
   colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
   results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-  
+
   # Start the for-loop that will run each prediction and fill it in
   for (i in 1:trial_amount) {
     # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -499,68 +499,68 @@ if (isTRUE(multiple_prediction)) {
     rTaxon <- results[matching_rows, "rTaxon"]
     rTaxonValueA <- results[matching_rows, "Trait_A"]
     rTaxonValueB <- results[matching_rows, "Trait_B"]
-    
+
     ### This loop will cover any situations where rTaxon is more than one value
     for (j in 1:length(rTaxon)) {
-      
-      # Gather the information from 
+
+      # Gather the information from
       skiplength <- length(rTaxon)
       Calculate_Post_Prob(i, RJmodel, multistate_prediction, skiplength, j, trial_name = logfile_path)
-      
+
       # Use the RJmodel to pull the correct data
       if (RJmodel %in% c("MCMC", "BOTH")) {
         Ind.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Ind.MCMC.Prob)
         Dep.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Dep.MCMC.Prob)
-        
+
         Ind.MCMC.LL  <- LogLoss(rTaxonValueB[j], Ind.MCMC.Prob)
-        Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)    
-        
+        Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)
+
         if (isTRUE(multistate_prediction)) {
           MS.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], MS.MCMC.Prob)
           MS.MCMC.LL  <- LogLoss(rTaxonValueB[j], MS.MCMC.Prob)
-          
+
         }
       }
-      
+
       if (RJmodel %in% c("RJMCMC", "BOTH")) {
         Ind.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Ind.RJ.Prob)
         Dep.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Dep.RJ.Prob)
-        
+
         Ind.RJ.LL  <- LogLoss(rTaxonValueB[j], Ind.RJ.Prob)
-        Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)    
-        
+        Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)
+
         if (isTRUE(multistate_prediction)) {
           MS.RJ.acc <- calculate_accuracy(rTaxonValueB[j], MS.RJ.Prob)
           MS.RJ.LL  <- LogLoss(rTaxonValueB[j], MS.RJ.Prob)
         }
       }
-      
-      
+
+
       # Finally assign the variables to the final table based on the RJ model
       if (RJmodel %in% c("MCMC", "BOTH")) {
         MCMC_prob <- c(Ind.MCMC.Prob, Dep.MCMC.Prob)
         MCMC_acc  <- c(Ind.MCMC.acc, Dep.MCMC.acc)
         MCMC_LL   <- c(Ind.MCMC.LL,  Dep.MCMC.LL)
-        
+
         if (isTRUE(multistate_prediction)) {
           MCMC_prob <- c(MS.MCMC.Prob, MCMC_prob)
           MCMC_acc  <- c(MS.MCMC.acc,  MCMC_acc)
           MCMC_LL   <- c(MS.MCMC.LL,   MCMC_LL)
         }
       }
-      
+
       if (RJmodel %in% c("RJMCMC", "BOTH")) {
         RJ_prob <- c(Ind.RJ.Prob, Dep.RJ.Prob)
         RJ_acc  <- c(Ind.RJ.acc,  Dep.RJ.acc)
         RJ_LL   <- c(Ind.RJ.LL,   Dep.RJ.LL)
-        
+
         if (isTRUE(multistate_prediction)) {
           RJ_prob <- c(MS.RJ.Prob, RJ_prob)
           RJ_acc  <- c(MS.RJ.acc,  RJ_acc)
           RJ_LL   <- c(MS.RJ.LL,   RJ_LL)
         }
       }
-      
+
       if (RJmodel == "MCMC") {
         result_vector <- c(MCMC_prob, MCMC_acc, MCMC_LL)
       } else if (RJmodel == "RJMCMC") {
@@ -568,16 +568,16 @@ if (isTRUE(multiple_prediction)) {
       } else if (RJmodel == "BOTH") {
         result_vector <- c(MCMC_prob, RJ_prob, MCMC_acc, RJ_acc, MCMC_LL, RJ_LL)
       }
-      
+
       # Assign results
       results[matching_rows[j], Results_labels] <- result_vector
-      
+
     }
   }
-  write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t") 
-  
-  
-  
+  write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
+
+
+
 
   ### Now we will repeat the process for the variable rates with multiple prediction
   if (isTRUE(variable_rates)) {
@@ -586,11 +586,11 @@ if (isTRUE(multiple_prediction)) {
       # Call the necessary paths
       logfile_path <- paste0("VariableRates/", type, "/Multiple/", type)
       results_name <- paste0("Results/VariableRates/Multiple/", type, ".Multiple.ResultsFull.txt")
-      
+
       # Pull the results into R
       colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
       results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-      
+
       # Start the for-loop that will run each prediction and fill it in
       for (i in 1:trial_amount) {
         # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -598,68 +598,68 @@ if (isTRUE(multiple_prediction)) {
         rTaxon <- results[matching_rows, "rTaxon"]
         rTaxonValueA <- results[matching_rows, "Trait_A"]
         rTaxonValueB <- results[matching_rows, "Trait_B"]
-        
+
         ### This loop will cover any situations where rTaxon is more than one value
         for (j in 1:length(rTaxon)) {
-          
-          # Gather the information from 
+
+          # Gather the information from
           skiplength <- length(rTaxon)
           Calculate_Post_Prob(i, RJmodel, multistate_prediction, skiplength, j, trial_name = logfile_path)
-          
+
           # Use the RJmodel to pull the correct data
           if (RJmodel %in% c("MCMC", "BOTH")) {
             Ind.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Ind.MCMC.Prob)
             Dep.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Dep.MCMC.Prob)
-            
+
             Ind.MCMC.LL  <- LogLoss(rTaxonValueB[j], Ind.MCMC.Prob)
-            Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)    
-            
+            Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)
+
             if (isTRUE(multistate_prediction)) {
               MS.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], MS.MCMC.Prob)
               MS.MCMC.LL  <- LogLoss(rTaxonValueB[j], MS.MCMC.Prob)
-              
+
             }
           }
-          
+
           if (RJmodel %in% c("RJMCMC", "BOTH")) {
             Ind.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Ind.RJ.Prob)
             Dep.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Dep.RJ.Prob)
-            
+
             Ind.RJ.LL  <- LogLoss(rTaxonValueB[j], Ind.RJ.Prob)
-            Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)    
-            
+            Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)
+
             if (isTRUE(multistate_prediction)) {
               MS.RJ.acc <- calculate_accuracy(rTaxonValueB[j], MS.RJ.Prob)
               MS.RJ.LL  <- LogLoss(rTaxonValueB[j], MS.RJ.Prob)
             }
           }
-          
-          
+
+
           # Finally assign the variables to the final table based on the RJ model
           if (RJmodel %in% c("MCMC", "BOTH")) {
             MCMC_prob <- c(Ind.MCMC.Prob, Dep.MCMC.Prob)
             MCMC_acc  <- c(Ind.MCMC.acc, Dep.MCMC.acc)
             MCMC_LL   <- c(Ind.MCMC.LL,  Dep.MCMC.LL)
-            
+
             if (isTRUE(multistate_prediction)) {
               MCMC_prob <- c(MS.MCMC.Prob, MCMC_prob)
               MCMC_acc  <- c(MS.MCMC.acc,  MCMC_acc)
               MCMC_LL   <- c(MS.MCMC.LL,   MCMC_LL)
             }
           }
-          
+
           if (RJmodel %in% c("RJMCMC", "BOTH")) {
             RJ_prob <- c(Ind.RJ.Prob, Dep.RJ.Prob)
             RJ_acc  <- c(Ind.RJ.acc,  Dep.RJ.acc)
             RJ_LL   <- c(Ind.RJ.LL,   Dep.RJ.LL)
-            
+
             if (isTRUE(multistate_prediction)) {
               RJ_prob <- c(MS.RJ.Prob, RJ_prob)
               RJ_acc  <- c(MS.RJ.acc,  RJ_acc)
               RJ_LL   <- c(MS.RJ.LL,   RJ_LL)
             }
           }
-          
+
           if (RJmodel == "MCMC") {
             result_vector <- c(MCMC_prob, MCMC_acc, MCMC_LL)
           } else if (RJmodel == "RJMCMC") {
@@ -667,13 +667,13 @@ if (isTRUE(multiple_prediction)) {
           } else if (RJmodel == "BOTH") {
             result_vector <- c(MCMC_prob, RJ_prob, MCMC_acc, RJ_acc, MCMC_LL, RJ_LL)
           }
-          
+
           # Assign results
           results[matching_rows[j], Results_labels] <- result_vector
-          
+
         }
       }
-      write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t") 
+      write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
     }
   }
 }
@@ -687,11 +687,11 @@ if (isTRUE(clade_prediction)) {
     # Call the necessary paths
     logfile_path <- paste0("ConstantRates/", type, "/Clade/", type)
     results_name <- paste0("Results/ConstantRates/Clade/", type, ".Clade.ResultsFull.txt")
-    
+
     # Pull the results into R
     colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
     results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-    
+
     # Start the for-loop that will run each prediction and fill it in
     for (i in 1:trial_amount) {
       # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -699,68 +699,68 @@ if (isTRUE(clade_prediction)) {
       rTaxon <- results[matching_rows, "rTaxon"]
       rTaxonValueA <- results[matching_rows, "Trait_A"]
       rTaxonValueB <- results[matching_rows, "Trait_B"]
-      
+
       ### This loop will cover any situations where rTaxon is more than one value
       for (j in 1:length(rTaxon)) {
-        
-        # Gather the information from 
+
+        # Gather the information from
         skiplength <- length(rTaxon)
         Calculate_Post_Prob(i, RJmodel, multistate_prediction, skiplength, j, trial_name = logfile_path)
-        
+
         # Use the RJmodel to pull the correct data
         if (RJmodel %in% c("MCMC", "BOTH")) {
           Ind.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Ind.MCMC.Prob)
           Dep.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Dep.MCMC.Prob)
-          
+
           Ind.MCMC.LL  <- LogLoss(rTaxonValueB[j], Ind.MCMC.Prob)
-          Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)    
-          
+          Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)
+
           if (isTRUE(multistate_prediction)) {
             MS.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], MS.MCMC.Prob)
             MS.MCMC.LL  <- LogLoss(rTaxonValueB[j], MS.MCMC.Prob)
-            
+
           }
         }
-        
+
         if (RJmodel %in% c("RJMCMC", "BOTH")) {
           Ind.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Ind.RJ.Prob)
           Dep.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Dep.RJ.Prob)
-          
+
           Ind.RJ.LL  <- LogLoss(rTaxonValueB[j], Ind.RJ.Prob)
-          Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)    
-          
+          Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)
+
           if (isTRUE(multistate_prediction)) {
             MS.RJ.acc <- calculate_accuracy(rTaxonValueB[j], MS.RJ.Prob)
             MS.RJ.LL  <- LogLoss(rTaxonValueB[j], MS.RJ.Prob)
           }
         }
-        
-        
+
+
         # Finally assign the variables to the final table based on the RJ model
         if (RJmodel %in% c("MCMC", "BOTH")) {
           MCMC_prob <- c(Ind.MCMC.Prob, Dep.MCMC.Prob)
           MCMC_acc  <- c(Ind.MCMC.acc, Dep.MCMC.acc)
           MCMC_LL   <- c(Ind.MCMC.LL,  Dep.MCMC.LL)
-          
+
           if (isTRUE(multistate_prediction)) {
             MCMC_prob <- c(MS.MCMC.Prob, MCMC_prob)
             MCMC_acc  <- c(MS.MCMC.acc,  MCMC_acc)
             MCMC_LL   <- c(MS.MCMC.LL,   MCMC_LL)
           }
         }
-        
+
         if (RJmodel %in% c("RJMCMC", "BOTH")) {
           RJ_prob <- c(Ind.RJ.Prob, Dep.RJ.Prob)
           RJ_acc  <- c(Ind.RJ.acc,  Dep.RJ.acc)
           RJ_LL   <- c(Ind.RJ.LL,   Dep.RJ.LL)
-          
+
           if (isTRUE(multistate_prediction)) {
             RJ_prob <- c(MS.RJ.Prob, RJ_prob)
             RJ_acc  <- c(MS.RJ.acc,  RJ_acc)
             RJ_LL   <- c(MS.RJ.LL,   RJ_LL)
           }
         }
-        
+
         if (RJmodel == "MCMC") {
           result_vector <- c(MCMC_prob, MCMC_acc, MCMC_LL)
         } else if (RJmodel == "RJMCMC") {
@@ -768,27 +768,27 @@ if (isTRUE(clade_prediction)) {
         } else if (RJmodel == "BOTH") {
           result_vector <- c(MCMC_prob, RJ_prob, MCMC_acc, RJ_acc, MCMC_LL, RJ_LL)
         }
-        
+
         # Assign results
         results[matching_rows[j], Results_labels] <- result_vector
-        
+
       }
     }
-    write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t") 
+    write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
   }
-  
-  
-  
+
+
+
   ### Now we will do the same for the randomly generated data
   print(paste0("Compiling the BayesTraits results from the clade-prediction, tests with random data."))
   # Call the necessary paths
   logfile_path <- "Random/Clade/Random"
   results_name <- "Results/Random/Random.Clade.ResultsFull.txt"
-  
+
   # Pull the results into R
   colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
   results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-  
+
   # Start the for-loop that will run each prediction and fill it in
   for (i in 1:trial_amount) {
     # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -796,68 +796,68 @@ if (isTRUE(clade_prediction)) {
     rTaxon <- results[matching_rows, "rTaxon"]
     rTaxonValueA <- results[matching_rows, "Trait_A"]
     rTaxonValueB <- results[matching_rows, "Trait_B"]
-    
+
     ### This loop will cover any situations where rTaxon is more than one value
     for (j in 1:length(rTaxon)) {
-      
-      # Gather the information from 
+
+      # Gather the information from
       skiplength <- length(rTaxon)
       Calculate_Post_Prob(i, RJmodel, multistate_prediction, skiplength, j, trial_name = logfile_path)
-      
+
       # Use the RJmodel to pull the correct data
       if (RJmodel %in% c("MCMC", "BOTH")) {
         Ind.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Ind.MCMC.Prob)
         Dep.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Dep.MCMC.Prob)
-        
+
         Ind.MCMC.LL  <- LogLoss(rTaxonValueB[j], Ind.MCMC.Prob)
-        Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)    
-        
+        Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)
+
         if (isTRUE(multistate_prediction)) {
           MS.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], MS.MCMC.Prob)
           MS.MCMC.LL  <- LogLoss(rTaxonValueB[j], MS.MCMC.Prob)
-          
+
         }
       }
-      
+
       if (RJmodel %in% c("RJMCMC", "BOTH")) {
         Ind.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Ind.RJ.Prob)
         Dep.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Dep.RJ.Prob)
-        
+
         Ind.RJ.LL  <- LogLoss(rTaxonValueB[j], Ind.RJ.Prob)
-        Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)    
-        
+        Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)
+
         if (isTRUE(multistate_prediction)) {
           MS.RJ.acc <- calculate_accuracy(rTaxonValueB[j], MS.RJ.Prob)
           MS.RJ.LL  <- LogLoss(rTaxonValueB[j], MS.RJ.Prob)
         }
       }
-      
-      
+
+
       # Finally assign the variables to the final table based on the RJ model
       if (RJmodel %in% c("MCMC", "BOTH")) {
         MCMC_prob <- c(Ind.MCMC.Prob, Dep.MCMC.Prob)
         MCMC_acc  <- c(Ind.MCMC.acc, Dep.MCMC.acc)
         MCMC_LL   <- c(Ind.MCMC.LL,  Dep.MCMC.LL)
-        
+
         if (isTRUE(multistate_prediction)) {
           MCMC_prob <- c(MS.MCMC.Prob, MCMC_prob)
           MCMC_acc  <- c(MS.MCMC.acc,  MCMC_acc)
           MCMC_LL   <- c(MS.MCMC.LL,   MCMC_LL)
         }
       }
-      
+
       if (RJmodel %in% c("RJMCMC", "BOTH")) {
         RJ_prob <- c(Ind.RJ.Prob, Dep.RJ.Prob)
         RJ_acc  <- c(Ind.RJ.acc,  Dep.RJ.acc)
         RJ_LL   <- c(Ind.RJ.LL,   Dep.RJ.LL)
-        
+
         if (isTRUE(multistate_prediction)) {
           RJ_prob <- c(MS.RJ.Prob, RJ_prob)
           RJ_acc  <- c(MS.RJ.acc,  RJ_acc)
           RJ_LL   <- c(MS.RJ.LL,   RJ_LL)
         }
       }
-      
+
       if (RJmodel == "MCMC") {
         result_vector <- c(MCMC_prob, MCMC_acc, MCMC_LL)
       } else if (RJmodel == "RJMCMC") {
@@ -865,16 +865,16 @@ if (isTRUE(clade_prediction)) {
       } else if (RJmodel == "BOTH") {
         result_vector <- c(MCMC_prob, RJ_prob, MCMC_acc, RJ_acc, MCMC_LL, RJ_LL)
       }
-      
+
       # Assign results
       results[matching_rows[j], Results_labels] <- result_vector
-      
+
     }
   }
-  write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t") 
-  
-  
-  
+  write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
+
+
+
   ### Finally, we run this for the last time with variable rates and clade-prediction
   if (isTRUE(variable_rates)) {
     for (type in types) {
@@ -882,11 +882,11 @@ if (isTRUE(clade_prediction)) {
       # Call the necessary paths
       logfile_path <- paste0("VariableRates/", type, "/Clade/", type)
       results_name <- paste0("Results/VariableRates/Clade/", type, ".Clade.ResultsFull.txt")
-      
+
       # Pull the results into R
       colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
       results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-      
+
       # Start the for-loop that will run each prediction and fill it in
       for (i in 1:trial_amount) {
         # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -894,68 +894,68 @@ if (isTRUE(clade_prediction)) {
         rTaxon <- results[matching_rows, "rTaxon"]
         rTaxonValueA <- results[matching_rows, "Trait_A"]
         rTaxonValueB <- results[matching_rows, "Trait_B"]
-        
+
         ### This loop will cover any situations where rTaxon is more than one value
         for (j in 1:length(rTaxon)) {
-          
-          # Gather the information from 
+
+          # Gather the information from
           skiplength <- length(rTaxon)
           Calculate_Post_Prob(i, RJmodel, multistate_prediction, skiplength, j, trial_name = logfile_path)
-          
+
           # Use the RJmodel to pull the correct data
           if (RJmodel %in% c("MCMC", "BOTH")) {
             Ind.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Ind.MCMC.Prob)
             Dep.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], Dep.MCMC.Prob)
-            
+
             Ind.MCMC.LL  <- LogLoss(rTaxonValueB[j], Ind.MCMC.Prob)
-            Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)    
-            
+            Dep.MCMC.LL  <- LogLoss(rTaxonValueB[j], Dep.MCMC.Prob)
+
             if (isTRUE(multistate_prediction)) {
               MS.MCMC.acc <- calculate_accuracy(rTaxonValueB[j], MS.MCMC.Prob)
               MS.MCMC.LL  <- LogLoss(rTaxonValueB[j], MS.MCMC.Prob)
-              
+
             }
           }
-          
+
           if (RJmodel %in% c("RJMCMC", "BOTH")) {
             Ind.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Ind.RJ.Prob)
             Dep.RJ.acc <- calculate_accuracy(rTaxonValueB[j], Dep.RJ.Prob)
-            
+
             Ind.RJ.LL  <- LogLoss(rTaxonValueB[j], Ind.RJ.Prob)
-            Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)    
-            
+            Dep.RJ.LL  <- LogLoss(rTaxonValueB[j], Dep.RJ.Prob)
+
             if (isTRUE(multistate_prediction)) {
               MS.RJ.acc <- calculate_accuracy(rTaxonValueB[j], MS.RJ.Prob)
               MS.RJ.LL  <- LogLoss(rTaxonValueB[j], MS.RJ.Prob)
             }
           }
-          
-          
+
+
           # Finally assign the variables to the final table based on the RJ model
           if (RJmodel %in% c("MCMC", "BOTH")) {
             MCMC_prob <- c(Ind.MCMC.Prob, Dep.MCMC.Prob)
             MCMC_acc  <- c(Ind.MCMC.acc, Dep.MCMC.acc)
             MCMC_LL   <- c(Ind.MCMC.LL,  Dep.MCMC.LL)
-            
+
             if (isTRUE(multistate_prediction)) {
               MCMC_prob <- c(MS.MCMC.Prob, MCMC_prob)
               MCMC_acc  <- c(MS.MCMC.acc,  MCMC_acc)
               MCMC_LL   <- c(MS.MCMC.LL,   MCMC_LL)
             }
           }
-          
+
           if (RJmodel %in% c("RJMCMC", "BOTH")) {
             RJ_prob <- c(Ind.RJ.Prob, Dep.RJ.Prob)
             RJ_acc  <- c(Ind.RJ.acc,  Dep.RJ.acc)
             RJ_LL   <- c(Ind.RJ.LL,   Dep.RJ.LL)
-            
+
             if (isTRUE(multistate_prediction)) {
               RJ_prob <- c(MS.RJ.Prob, RJ_prob)
               RJ_acc  <- c(MS.RJ.acc,  RJ_acc)
               RJ_LL   <- c(MS.RJ.LL,   RJ_LL)
             }
           }
-          
+
           if (RJmodel == "MCMC") {
             result_vector <- c(MCMC_prob, MCMC_acc, MCMC_LL)
           } else if (RJmodel == "RJMCMC") {
@@ -963,13 +963,13 @@ if (isTRUE(clade_prediction)) {
           } else if (RJmodel == "BOTH") {
             result_vector <- c(MCMC_prob, RJ_prob, MCMC_acc, RJ_acc, MCMC_LL, RJ_LL)
           }
-          
+
           # Assign results
           results[matching_rows[j], Results_labels] <- result_vector
-          
+
         }
       }
-      write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t") 
+      write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
     }
   }
 }

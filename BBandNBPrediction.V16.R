@@ -2,7 +2,7 @@
 
 
 
-##### 
+#####
 # First, get simulation bash file and any useful functions for this script
 bash_file <- Sys.glob("Discrete_Simulation.V*")
 version_str <- sub(".*(V[0-9]+).*", "\\1", bash_file)
@@ -25,17 +25,17 @@ trial_amount <- as.numeric(gsub("[^0-9.-]", "", trial_amount))
 
 
 
-##### 
+#####
 # Make the constant rates predictions
 for (type in types) {
   # Call the necessary paths
   data_path <- paste0("ConstantRates/", type, "/Data/", type)
   results_name <- paste0("Results/ConstantRates/Single/", type, ".Single.ResultsFull.txt")
-  
+
   # Pull the results into R
   colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
   results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-  
+
   # Start the for-loop that will run each prediction and fill it in
   for (i in 1:trial_amount) {
     # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -43,28 +43,28 @@ for (type in types) {
     rTaxon <- results[matching_rows, 2]
     rTaxonValueA <- results[matching_rows, 3]
     rTaxonValueB <- results[matching_rows, 4]
-    
+
     # Call the data file for this iteration
     data_name <- paste0(data_path, ".", i, ".Full_data.txt")
     data <- read.table(data_name, skip = 1, sep = "\t")
-    
+
     # Now establish some details we need to predict
     prediction_data <- data[-rTaxon,]
-    
+
     OO <- sum(prediction_data[, 4] == 0)  # This saves as 0 instead of 00
     Ol <- sum(prediction_data[, 4] == 1)  # This saves as 1 instead of 01
     lO <- sum(prediction_data[, 4] == 10) # This saves intuitively
     ll <- sum(prediction_data[, 4] == 11) # This saves intuitively
     counts <- matrix(data = c(OO, Ol, lO, ll), nrow = 2, ncol = 2)
-    
+
     prediction_data <- prediction_data[, c(2:3)]
-    
+
     # Now we can make the Beta Binomial and Naive Bayes Predictions
     BB.Prob <- Beta_Bin_predict(prediction_data, length(rTaxon))
     NB.Prob <- Naive_Bayes_predict(counts, rTaxonValueA)
-    
+
     # Assign these values to the results table
-    # Accuracies and Log loss scores are calculated as they're added  
+    # Accuracies and Log loss scores are calculated as they're added
     results[i, c("Beta_Binom_Prob", "Beta_Binom_acc", "Beta_Binom_LL",
                  "Naive_Bayes_Prob", "Naive_Bayes_acc", "Naive_Bayes_LL")] <-
       c(BB.Prob, calculate_accuracy(rTaxonValueB, BB.Prob), LogLoss(rTaxonValueB, BB.Prob), NB.Prob,
@@ -72,20 +72,20 @@ for (type in types) {
   }
   # Rewrite the results file with the new tests
   write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
-  
-  
-  
+
+
+
   ### Check and potentially rerun this for Multiple and Clade prediction
   if (multiple_prediction == TRUE) {
     for (type in types) {
       # Call the necessary paths
       data_path <- paste0("ConstantRates/", type, "/Data/", type)
       results_name <- paste0("Results/ConstantRates/Multiple/", type, ".Multiple.ResultsFull.txt")
-      
+
       # Pull the results into R
       colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
       results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-      
+
       # Start the for-loop that will run each prediction and fill it in
       for (i in 1:trial_amount) {
         # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -93,52 +93,52 @@ for (type in types) {
         rTaxon <- results[matching_rows, 2]
         rTaxonValueA <- results[matching_rows, 3]
         rTaxonValueB <- results[matching_rows, 4]
-        
+
         # Call the data file for this iteration
         data_name <- paste0(data_path, ".", i, ".Full_data.txt")
         data <- read.table(data_name, skip = 1, sep = "\t")
-        
+
         # Now establish some details we need to predict
         prediction_data <- data[-rTaxon,]
-        
+
         OO <- sum(prediction_data[, 4] == 0)  # This saves as 0 instead of 00
         Ol <- sum(prediction_data[, 4] == 1)  # This saves as 1 instead of 01
         lO <- sum(prediction_data[, 4] == 10) # This saves intuitively
         ll <- sum(prediction_data[, 4] == 11) # This saves intuitively
         counts <- matrix(data = c(OO, Ol, lO, ll), nrow = 2, ncol = 2)
-        
+
         prediction_data <- prediction_data[, c(2:3)]
-        
+
         # Now we can make the Beta Binomial and Naive Bayes Predictions
         BB.Prob <- Beta_Bin_predict(prediction_data, length(rTaxon))
         NB.Prob <- Naive_Bayes_predict(counts, rTaxonValueA)
-        
+
         # Assign these values to the results table, with a small adjustment for multiple prediction
         # Naive Bayes accuracies and log loss scores are calculated as they're being assigned
         for (j in 1:length(rTaxon)) {
           results[matching_rows[j], c("Beta_Binom_Prob", "Beta_Binom_acc", "Beta_Binom_LL",
                                       "Naive_Bayes_Prob", "Naive_Bayes_acc", "Naive_Bayes_LL")] <-
-            c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob), 
-              NB.Prob[j], calculate_accuracy(rTaxonValueB[j], NB.Prob[j]), LogLoss(rTaxonValueB[j], NB.Prob[j])) 
+            c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob),
+              NB.Prob[j], calculate_accuracy(rTaxonValueB[j], NB.Prob[j]), LogLoss(rTaxonValueB[j], NB.Prob[j]))
         }
       }
       # Rewrite the results file with the new tests
       write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
     }
   }
-  
-  
+
+
   # Check and run clade prediction
   if (clade_prediction == TRUE) {
     for (type in types) {
       # Call the necessary paths
       data_path <- paste0("ConstantRates/", type, "/Data/", type)
       results_name <- paste0("Results/ConstantRates/Clade/", type, ".Clade.ResultsFull.txt")
-      
+
       # Pull the results into R
       colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
       results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-      
+
       # Start the for-loop that will run each prediction and fill it in
       for (i in 1:trial_amount) {
         # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -146,33 +146,33 @@ for (type in types) {
         rTaxon <- results[matching_rows, 2]
         rTaxonValueA <- results[matching_rows, 3]
         rTaxonValueB <- results[matching_rows, 4]
-        
+
         # Call the data file for this iteration
         data_name <- paste0(data_path, ".", i, ".Full_data.txt")
         data <- read.table(data_name, skip = 1, sep = "\t")
-        
+
         # Now establish some details we need to predict
         prediction_data <- data[-rTaxon,]
-        
+
         OO <- sum(prediction_data[, 4] == 0)  # This saves as 0 instead of 00
         Ol <- sum(prediction_data[, 4] == 1)  # This saves as 1 instead of 01
         lO <- sum(prediction_data[, 4] == 10) # This saves intuitively
         ll <- sum(prediction_data[, 4] == 11) # This saves intuitively
         counts <- matrix(data = c(OO, Ol, lO, ll), nrow = 2, ncol = 2)
-        
+
         prediction_data <- prediction_data[, c(2:3)]
-        
+
         # Now we can make the Beta Binomial and Naive Bayes Predictions
         BB.Prob <- Beta_Bin_predict(prediction_data, length(rTaxon))
         NB.Prob <- Naive_Bayes_predict(counts, rTaxonValueA)
-        
+
         # Assign these values to the results table, with a small adjustment for multiple prediction
         # Naive Bayes accuracies and log loss scores are calculated as they're being assigned
         for (j in 1:length(rTaxon)) {
           results[matching_rows[j], c("Beta_Binom_Prob", "Beta_Binom_acc", "Beta_Binom_LL",
                                       "Naive_Bayes_Prob", "Naive_Bayes_acc", "Naive_Bayes_LL")] <-
-            c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob), 
-              NB.Prob[j], calculate_accuracy(rTaxonValueB[j], NB.Prob[j]), LogLoss(rTaxonValueB[j], NB.Prob[j])) 
+            c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob),
+              NB.Prob[j], calculate_accuracy(rTaxonValueB[j], NB.Prob[j]), LogLoss(rTaxonValueB[j], NB.Prob[j]))
         }
       }
       # Rewrite the results file with the new tests
@@ -183,7 +183,7 @@ for (type in types) {
 
 
 
-##### 
+#####
 # Run the predictions for random data
 # Call the necessary paths
 data_path <- "Random/Data/Random"
@@ -200,28 +200,28 @@ for (i in 1:trial_amount) {
   rTaxon <- results[matching_rows, 2]
   rTaxonValueA <- results[matching_rows, 3]
   rTaxonValueB <- results[matching_rows, 4]
-  
+
   # Call the data file for this iteration
   data_name <- paste0(data_path, ".", i, ".Full_data.txt")
   data <- read.table(data_name, skip = 1, sep = "\t")
-  
+
   # Now establish some details we need to predict
   prediction_data <- data[-rTaxon,]
-  
+
   OO <- sum(prediction_data[, 4] == 0)  # This saves as 0 instead of 00
   Ol <- sum(prediction_data[, 4] == 1)  # This saves as 1 instead of 01
   lO <- sum(prediction_data[, 4] == 10) # This saves intuitively
   ll <- sum(prediction_data[, 4] == 11) # This saves intuitively
   counts <- matrix(data = c(OO, Ol, lO, ll), nrow = 2, ncol = 2)
-  
+
   prediction_data <- prediction_data[, c(2:3)]
-  
+
   # Now we can make the Beta Binomial and Naive Bayes Predictions
   BB.Prob <- Beta_Bin_predict(prediction_data, length(rTaxon))
   NB.Prob <- Naive_Bayes_predict(counts, rTaxonValueA)
-  
+
   # Assign these values to the results table
-  # Accuracies and Log loss scores are calculated as they're added  
+  # Accuracies and Log loss scores are calculated as they're added
   results[i, c("Beta_Binom_Prob", "Beta_Binom_acc", "Beta_Binom_LL",
                "Naive_Bayes_Prob", "Naive_Bayes_acc", "Naive_Bayes_LL")] <-
     c(BB.Prob, calculate_accuracy(rTaxonValueB, BB.Prob), LogLoss(rTaxonValueB, BB.Prob), NB.Prob,
@@ -237,11 +237,11 @@ if (multiple_prediction == TRUE) {
   # Call the necessary paths
   data_path <- "Random/Data/Random"
   results_name <- "Results/Random/Random.Multiple.ResultsFull.txt"
-  
+
   # Pull the results into R
   colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
   results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-  
+
   # Start the for-loop that will run each prediction and fill it in
   for (i in 1:trial_amount) {
     # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -249,33 +249,33 @@ if (multiple_prediction == TRUE) {
     rTaxon <- results[matching_rows, 2]
     rTaxonValueA <- results[matching_rows, 3]
     rTaxonValueB <- results[matching_rows, 4]
-    
+
     # Call the data file for this iteration
     data_name <- paste0(data_path, ".", i, ".Full_data.txt")
     data <- read.table(data_name, skip = 1, sep = "\t")
-    
+
     # Now establish some details we need to predict
     prediction_data <- data[-rTaxon,]
-    
+
     OO <- sum(prediction_data[, 4] == 0)  # This saves as 0 instead of 00
     Ol <- sum(prediction_data[, 4] == 1)  # This saves as 1 instead of 01
     lO <- sum(prediction_data[, 4] == 10) # This saves intuitively
     ll <- sum(prediction_data[, 4] == 11) # This saves intuitively
     counts <- matrix(data = c(OO, Ol, lO, ll), nrow = 2, ncol = 2)
-    
+
     prediction_data <- prediction_data[, c(2:3)]
-    
+
     # Now we can make the Beta Binomial and Naive Bayes Predictions
     BB.Prob <- Beta_Bin_predict(prediction_data, length(rTaxon))
     NB.Prob <- Naive_Bayes_predict(counts, rTaxonValueA)
-    
+
     # Assign these values to the results table, with a small adjustment for multiple prediction
     # Naive Bayes accuracies and log loss scores are calculated as they're being assigned
     for (j in 1:length(rTaxon)) {
       results[matching_rows[j], c("Beta_Binom_Prob", "Beta_Binom_acc", "Beta_Binom_LL",
                                   "Naive_Bayes_Prob", "Naive_Bayes_acc", "Naive_Bayes_LL")] <-
-        c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob), 
-          NB.Prob[j], calculate_accuracy(rTaxonValueB[j], NB.Prob[j]), LogLoss(rTaxonValueB[j], NB.Prob[j])) 
+        c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob),
+          NB.Prob[j], calculate_accuracy(rTaxonValueB[j], NB.Prob[j]), LogLoss(rTaxonValueB[j], NB.Prob[j]))
     }
   }
   # Rewrite the results file with the new tests
@@ -288,11 +288,11 @@ if (clade_prediction == TRUE) {
   # Call the necessary paths
   data_path <- "Random/Data/Random"
   results_name <- "Results/Random/Random.Clade.ResultsFull.txt"
-  
+
   # Pull the results into R
   colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
   results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-  
+
   # Start the for-loop that will run each prediction and fill it in
   for (i in 1:trial_amount) {
     # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -300,38 +300,38 @@ if (clade_prediction == TRUE) {
     rTaxon <- results[matching_rows, 2]
     rTaxonValueA <- results[matching_rows, 3]
     rTaxonValueB <- results[matching_rows, 4]
-    
+
     # Call the data file for this iteration
     data_name <- paste0(data_path, ".", i, ".Full_data.txt")
     data <- read.table(data_name, skip = 1, sep = "\t")
-    
+
     # Now establish some details we need to predict
     prediction_data <- data[-rTaxon,]
-    
+
     OO <- sum(prediction_data[, 4] == 0)  # This saves as 0 instead of 00
     Ol <- sum(prediction_data[, 4] == 1)  # This saves as 1 instead of 01
     lO <- sum(prediction_data[, 4] == 10) # This saves intuitively
     ll <- sum(prediction_data[, 4] == 11) # This saves intuitively
     counts <- matrix(data = c(OO, Ol, lO, ll), nrow = 2, ncol = 2)
-    
+
     prediction_data <- prediction_data[, c(2:3)]
-    
+
     # Now we can make the Beta Binomial and Naive Bayes Predictions
     BB.Prob <- Beta_Bin_predict(prediction_data, length(rTaxon))
     NB.Prob <- Naive_Bayes_predict(counts, rTaxonValueA)
-    
+
     # Now check the accuracy and Log loss scores
     # These will be the same for every prediction, so we only need to do it once
     BB.acc <- calculate_accuracy(rTaxonValueB, BB.Prob)
     BB.LL <- LogLoss(rTaxonValueB, BB.Prob)
-    
+
     # Assign these values to the results table, with a small adjustment for multiple prediction
     # Naive Bayes accuracies and log loss scores are calculated as they're being assigned
     for (j in 1:length(rTaxon)) {
       results[matching_rows[j], c("Beta_Binom_Prob", "Beta_Binom_acc", "Beta_Binom_LL",
                                   "Naive_Bayes_Prob", "Naive_Bayes_acc", "Naive_Bayes_LL")] <-
-        c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob), 
-          NB.Prob[j], calculate_accuracy(rTaxonValueB[j], NB.Prob[j]), LogLoss(rTaxonValueB[j], NB.Prob[j])) 
+        c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob),
+          NB.Prob[j], calculate_accuracy(rTaxonValueB[j], NB.Prob[j]), LogLoss(rTaxonValueB[j], NB.Prob[j]))
     }
   }
   # Rewrite the results file with the new tests
@@ -339,18 +339,18 @@ if (clade_prediction == TRUE) {
 }
 
 
-##### 
+#####
 # Check and run the variable rates predictions
 if (variable_rates == TRUE) {
   for (type in types) {
     # Call the necessary paths
     data_path <- paste0("VariableRates/", type, "/Data/", type)
     results_name <- paste0("Results/VariableRates/Single/", type, ".Single.ResultsFull.txt")
-    
+
     # Pull the results into R
     colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
     results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-    
+
     # Start the for-loop that will run each prediction and fill it in
     for (i in 1:trial_amount) {
       # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -358,28 +358,28 @@ if (variable_rates == TRUE) {
       rTaxon <- results[matching_rows, 2]
       rTaxonValueA <- results[matching_rows, 3]
       rTaxonValueB <- results[matching_rows, 4]
-      
+
       # Call the data file for this iteration
       data_name <- paste0(data_path, ".", i, ".Full_data.txt")
       data <- read.table(data_name, skip = 1, sep = "\t")
-      
+
       # Now establish some details we need to predict
       prediction_data <- data[-rTaxon,]
-      
+
       OO <- sum(prediction_data[, 4] == 0)  # This saves as 0 instead of 00
       Ol <- sum(prediction_data[, 4] == 1)  # This saves as 1 instead of 01
       lO <- sum(prediction_data[, 4] == 10) # This saves intuitively
       ll <- sum(prediction_data[, 4] == 11) # This saves intuitively
       counts <- matrix(data = c(OO, Ol, lO, ll), nrow = 2, ncol = 2)
-      
+
       prediction_data <- prediction_data[, c(2:3)]
-      
+
       # Now we can make the Beta Binomial and Naive Bayes Predictions
       BB.Prob <- Beta_Bin_predict(prediction_data, length(rTaxon))
       NB.Prob <- Naive_Bayes_predict(counts, rTaxonValueA)
-      
+
       # Assign these values to the results table
-      # Accuracies and Log loss scores are calculated as they're added  
+      # Accuracies and Log loss scores are calculated as they're added
       results[i, c("Beta_Binom_Prob", "Beta_Binom_acc", "Beta_Binom_LL",
                    "Naive_Bayes_Prob", "Naive_Bayes_acc", "Naive_Bayes_LL")] <-
         c(BB.Prob, calculate_accuracy(rTaxonValueB, BB.Prob), LogLoss(rTaxonValueB, BB.Prob), NB.Prob,
@@ -387,19 +387,19 @@ if (variable_rates == TRUE) {
     }
     # Rewrite the results file with the new tests
     write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
-    
-    
-    
+
+
+
     ### Check and potentially rerun this for Multiple and Clade prediction
     if (multiple_prediction == TRUE) {
       # Call the necessary paths
       data_path <- paste0("VariableRates/", type, "/Data/", type)
       results_name <- paste0("Results/VariableRates/Multiple/", type, ".Multiple.ResultsFull.txt")
-      
+
       # Pull the results into R
       colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
       results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-      
+
       # Start the for-loop that will run each prediction and fill it in
       for (i in 1:trial_amount) {
         # First, call rTaxon by subsetting the rows where column 1 matches i
@@ -407,99 +407,99 @@ if (variable_rates == TRUE) {
         rTaxon <- results[matching_rows, 2]
         rTaxonValueA <- results[matching_rows, 3]
         rTaxonValueB <- results[matching_rows, 4]
-        
+
         # Call the data file for this iteration
         data_name <- paste0(data_path, ".", i, ".Full_data.txt")
         data <- read.table(data_name, skip = 1, sep = "\t")
-        
+
         # Now establish some details we need to predict
         prediction_data <- data[-rTaxon,]
-        
+
         OO <- sum(prediction_data[, 4] == 0)  # This saves as 0 instead of 00
         Ol <- sum(prediction_data[, 4] == 1)  # This saves as 1 instead of 01
         lO <- sum(prediction_data[, 4] == 10) # This saves intuitively
         ll <- sum(prediction_data[, 4] == 11) # This saves intuitively
         counts <- matrix(data = c(OO, Ol, lO, ll), nrow = 2, ncol = 2)
-        
+
         prediction_data <- prediction_data[, c(2:3)]
-        
+
         # Now we can make the Beta Binomial and Naive Bayes Predictions
         BB.Prob <- Beta_Bin_predict(prediction_data, length(rTaxon))
         NB.Prob <- Naive_Bayes_predict(counts, rTaxonValueA)
-        
+
         # Now check the accuracy and Log loss scores
         # These will be the same for every prediction, so we only need to do it once
         BB.acc <- calculate_accuracy(rTaxonValueB, BB.Prob)
         BB.LL <- LogLoss(rTaxonValueB, BB.Prob)
-        
+
         # Assign these values to the results table, with a small adjustment for multiple prediction
         # Naive Bayes accuracies and log loss scores are calculated as they're being assigned
         for (j in 1:length(rTaxon)) {
           results[matching_rows[j], c("Beta_Binom_Prob", "Beta_Binom_acc", "Beta_Binom_LL",
                                       "Naive_Bayes_Prob", "Naive_Bayes_acc", "Naive_Bayes_LL")] <-
-            c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob), 
-              NB.Prob[j], calculate_accuracy(rTaxonValueB[j], NB.Prob[j]), LogLoss(rTaxonValueB[j], NB.Prob[j])) 
-        }
-      }
-      # Rewrite the results file with the new tests
-      write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
-    }
-    
-    
-    # Check and run clade prediction
-    if (clade_prediction == TRUE) {
-      # Call the necessary paths
-      data_path <- paste0("VariableRates/", type, "/Data/", type)
-      results_name <- paste0("Results/VariableRates/Clade/", type, ".Clade.ResultsFull.txt")
-      
-      # Pull the results into R
-      colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
-      results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
-      
-      # Start the for-loop that will run each prediction and fill it in
-      for (i in 1:trial_amount) {
-        # First, call rTaxon by subsetting the rows where column 1 matches i
-        matching_rows <- which(results[, 1] == i)
-        rTaxon <- results[matching_rows, 2]
-        rTaxonValueA <- results[matching_rows, 3]
-        rTaxonValueB <- results[matching_rows, 4]
-        
-        # Call the data file for this iteration
-        data_name <- paste0(data_path, ".", i, ".Full_data.txt")
-        data <- read.table(data_name, skip = 1, sep = "\t")
-        
-        # Now establish some details we need to predict
-        prediction_data <- data[-rTaxon,]
-        
-        OO <- sum(prediction_data[, 4] == 0)  # This saves as 0 instead of 00
-        Ol <- sum(prediction_data[, 4] == 1)  # This saves as 1 instead of 01
-        lO <- sum(prediction_data[, 4] == 10) # This saves intuitively
-        ll <- sum(prediction_data[, 4] == 11) # This saves intuitively
-        counts <- matrix(data = c(OO, Ol, lO, ll), nrow = 2, ncol = 2)
-        
-        prediction_data <- prediction_data[, c(2:3)]
-        
-        # Now we can make the Beta Binomial and Naive Bayes Predictions
-        BB.Prob <- Beta_Bin_predict(prediction_data, length(rTaxon))
-        NB.Prob <- Naive_Bayes_predict(counts, rTaxonValueA)
-        
-        # Now check the accuracy and Log loss scores
-        # These will be the same for every prediction, so we only need to do it once
-        BB.acc <- calculate_accuracy(rTaxonValueB, BB.Prob)
-        BB.LL <- LogLoss(rTaxonValueB, BB.Prob)
-        
-        # Assign these values to the results table, with a small adjustment for multiple prediction
-        # Naive Bayes accuracies and log loss scores are calculated as they're being assigned
-        for (j in 1:length(rTaxon)) {
-          results[matching_rows[j], c("Beta_Binom_Prob", "Beta_Binom_acc", "Beta_Binom_LL",
-                                      "Naive_Bayes_Prob", "Naive_Bayes_acc", "Naive_Bayes_LL")] <-
-            c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob), 
+            c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob),
               NB.Prob[j], calculate_accuracy(rTaxonValueB[j], NB.Prob[j]), LogLoss(rTaxonValueB[j], NB.Prob[j]))
         }
       }
       # Rewrite the results file with the new tests
       write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
-    }  
+    }
+
+
+    # Check and run clade prediction
+    if (clade_prediction == TRUE) {
+      # Call the necessary paths
+      data_path <- paste0("VariableRates/", type, "/Data/", type)
+      results_name <- paste0("Results/VariableRates/Clade/", type, ".Clade.ResultsFull.txt")
+
+      # Pull the results into R
+      colnames_results <- strsplit(readLines(results_name, n = 1), "\t")[[1]]
+      results <- read.table(results_name, skip = 1, sep = "\t", col.names = colnames_results)
+
+      # Start the for-loop that will run each prediction and fill it in
+      for (i in 1:trial_amount) {
+        # First, call rTaxon by subsetting the rows where column 1 matches i
+        matching_rows <- which(results[, 1] == i)
+        rTaxon <- results[matching_rows, 2]
+        rTaxonValueA <- results[matching_rows, 3]
+        rTaxonValueB <- results[matching_rows, 4]
+
+        # Call the data file for this iteration
+        data_name <- paste0(data_path, ".", i, ".Full_data.txt")
+        data <- read.table(data_name, skip = 1, sep = "\t")
+
+        # Now establish some details we need to predict
+        prediction_data <- data[-rTaxon,]
+
+        OO <- sum(prediction_data[, 4] == 0)  # This saves as 0 instead of 00
+        Ol <- sum(prediction_data[, 4] == 1)  # This saves as 1 instead of 01
+        lO <- sum(prediction_data[, 4] == 10) # This saves intuitively
+        ll <- sum(prediction_data[, 4] == 11) # This saves intuitively
+        counts <- matrix(data = c(OO, Ol, lO, ll), nrow = 2, ncol = 2)
+
+        prediction_data <- prediction_data[, c(2:3)]
+
+        # Now we can make the Beta Binomial and Naive Bayes Predictions
+        BB.Prob <- Beta_Bin_predict(prediction_data, length(rTaxon))
+        NB.Prob <- Naive_Bayes_predict(counts, rTaxonValueA)
+
+        # Now check the accuracy and Log loss scores
+        # These will be the same for every prediction, so we only need to do it once
+        BB.acc <- calculate_accuracy(rTaxonValueB, BB.Prob)
+        BB.LL <- LogLoss(rTaxonValueB, BB.Prob)
+
+        # Assign these values to the results table, with a small adjustment for multiple prediction
+        # Naive Bayes accuracies and log loss scores are calculated as they're being assigned
+        for (j in 1:length(rTaxon)) {
+          results[matching_rows[j], c("Beta_Binom_Prob", "Beta_Binom_acc", "Beta_Binom_LL",
+                                      "Naive_Bayes_Prob", "Naive_Bayes_acc", "Naive_Bayes_LL")] <-
+            c(BB.Prob, calculate_accuracy(rTaxonValueB[j], BB.Prob), LogLoss(rTaxonValueB[j], BB.Prob),
+              NB.Prob[j], calculate_accuracy(rTaxonValueB[j], NB.Prob[j]), LogLoss(rTaxonValueB[j], NB.Prob[j]))
+        }
+      }
+      # Rewrite the results file with the new tests
+      write.table(results, file = results_name, quote = F, row.names = F, col.names = T, sep = "\t")
+    }
   }
 }
 

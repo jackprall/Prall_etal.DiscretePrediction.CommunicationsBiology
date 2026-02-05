@@ -2,7 +2,7 @@
 # Takes ~1 minute and 31 seconds for 1000 trials, 500-tips, and all optional runs
 
 
-##### 
+#####
 # First, get simulation bash file and any useful functions for this script
 bash_file <- Sys.glob("Discrete_Simulation.V*")
 version_str <- sub(".*(V[0-9]+).*", "\\1", bash_file)
@@ -45,20 +45,20 @@ lapply(required_packages, library, character.only = TRUE)
 
 
 
-##### 
+#####
 # Generate the data for the main trials
 for (type in types) {
   # Create a matrix for this trial's data
   trial_data <- matrix(nrow = 0, ncol = 5)
-  colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", 
+  colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B",
                          "Branch_length")
-  
+
   # Now we need to delve into each type
   for (i in 1:trial_amount) {
     # First, call the full data set
     fullname <- paste0("ConstantRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
     TempMat <- read.table(file = fullname, skip = 1)
-    
+
     # Ensure an even sample of A=0 and A=1
     if (i %% 2 == 1) {
       # i is odd: sample where column 2 == 0
@@ -67,26 +67,26 @@ for (type in types) {
       # i is even: sample where column 2 == 1
       eligible_rows <- which(TempMat[, 2] == 1)
     }
-    
+
     # Now sample only from eligible rows
     if (length(eligible_rows) > 0) {
       rTaxon <- sample(eligible_rows, 1)
     } else {
       rTaxon <- sample(1:nrow(TempMat), 1, replace = F)
     }
-    
+
     # Record the character state(s) for rTaxon
     rTaxonValueA <- as.numeric(TempMat[rTaxon, 2])
     rTaxonValueB <- as.numeric(TempMat[rTaxon, 3])
-    
+
     # Pull the tree to read the terminal branch length
     treename <- paste0("Trees/Full_tree.", i, ".tre")
     full_tree <- read.nexus(treename)
-    
+
     # This function will record the branch length leading to the unknown taxon.
     BL <- unknown_branch_length(rTaxon, full_tree)
-    
-    
+
+
     #Store the results in the Trial's Data Table
     trial <- c(i, rTaxon, rTaxonValueA, rTaxonValueB, BL)
     trial_data <- rbind(trial_data, trial)
@@ -101,7 +101,7 @@ for (type in types) {
 #####
 # Create a matrix for the random trials' data
 trial_data <- matrix(nrow = 0, ncol = 5)
-colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", 
+colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B",
                           "Branch_length")
 
 # Now we need to delve into each type
@@ -109,7 +109,7 @@ for (i in 1:trial_amount) {
   # First, call the full data set
   fullname <- paste0("Random/Data/Random.", i, ".Full_data.txt")
   TempMat <- read.table(file = fullname, skip = 1)
-  
+
   # Ensure an even sample of A=0 and A=1
   if (i %% 2 == 1) {
     # i is odd: sample where column 2 == 0
@@ -118,26 +118,26 @@ for (i in 1:trial_amount) {
     # i is even: sample where column 2 == 1
     eligible_rows <- which(TempMat[, 2] == 1)
   }
-  
+
   # Now sample only from eligible rows
   if (length(eligible_rows) > 0) {
     rTaxon <- sample(eligible_rows, 1)
   } else {
     rTaxon <- sample(1:nrow(TempMat), 1, replace = F)
   }
-  
+
   # Record the character state(s) for rTaxon
   rTaxonValueA <- as.numeric(TempMat[rTaxon, 2])
   rTaxonValueB <- as.numeric(TempMat[rTaxon, 3])
-  
+
   # Pull the tree to read the terminal branch length
   treename <- paste0("Trees/Full_tree.", i, ".tre")
   full_tree <- read.nexus(treename)
-  
+
   # This function will record the branch length leading to the unknown taxon.
   BL <- unknown_branch_length(rTaxon, full_tree)
-  
-  
+
+
   #Store the results in the Trial's Data Table
   trial <- c(i, rTaxon, rTaxonValueA, rTaxonValueB, BL)
   trial_data <- rbind(trial_data, trial)
@@ -147,21 +147,21 @@ write.table(trial_data, file = "Random/Single/Random.Unknown_info.txt", row.name
 
 
 
-##### 
+#####
 # Run the variable rates if necessary
-if (variable_rates == TRUE) { 
+if (variable_rates == TRUE) {
   for (type in types) {
     # Create a matrix for this trial's data
     trial_data <- matrix(nrow = 0, ncol = 5)
-    colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B", 
+    colnames(trial_data) <- c("Trial_#", "Taxon_#", "Trait_A", "Trait_B",
                               "Branch_length")
-    
+
     # Now we need to delve into each type
     for (i in 1:trial_amount) {
       # First, call the full data set
       fullname <- paste0("VariableRates/", type, "/Data/", type, ".", i, ".Full_data.txt")
       TempMat <- read.table(file = fullname, skip = 1)
-      
+
       # Ensure an even sample of A=0 and A=1
       if (i %% 2 == 1) {
         # i is odd: sample where column 3 == 0
@@ -170,26 +170,26 @@ if (variable_rates == TRUE) {
         # i is even: sample where column 3 == 1
         eligible_rows <- which(TempMat[, 2] == 1)
       }
-      
+
       # Now sample only from eligible rows
       if (length(eligible_rows) > 0) {
         rTaxon <- sample(eligible_rows, 1)
       } else {
         rTaxon <- sample(1:nrow(TempMat), 1, replace = F)
       }
-      
+
       # Record the character state(s) for rTaxon
       rTaxonValueA <- as.numeric(TempMat[rTaxon, 2])
       rTaxonValueB <- as.numeric(TempMat[rTaxon, 3])
-      
+
       # Pull the tree to read the terminal branch length
       treename <- paste0("Trees/Full_tree.", i, ".tre")
       full_tree <- read.nexus(treename)
-      
+
       # This function will record the branch length leading to the unknown taxon.
       BL <- unknown_branch_length(rTaxon, full_tree)
-      
-      
+
+
       #Store the results in the Trial's Data Table
       trial <- c(i, rTaxon, rTaxonValueA, rTaxonValueB, BL)
       trial_data <- rbind(trial_data, trial)

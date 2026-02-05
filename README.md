@@ -29,7 +29,7 @@ This repository contains the scripts for "Predicting Discrete Traits in Evolving
     - It functions the same as SampleSingleTaxa.*.R except it samples a number of taxa equal to the unknown_size setting in the shell script
 
 - ResultsMatrixGeneration.*.R
-    - This script generates the final results table and fills in the taxon and tree information 
+    - This script generates the final results table and fills in the taxon and tree information
 
 - FilesForBayesTraits.*.R
     - This script generates the input files necessary to run BayesTraits based on the simulated data and settings
@@ -58,7 +58,7 @@ This repository contains the scripts for "Predicting Discrete Traits in Evolving
 - RemoveSuperfluousFiles.*.R
     - This script removes any additional files created in the middle of the simulation to decrease the storage costs of the simulation long term
     - It removes instruction, schedule, model, and particular data files which are only used as inputs for BayesTraits
- 
+
 ## System and Program Requirements
 
 - R 4.4.3
@@ -67,14 +67,14 @@ This repository contains the scripts for "Predicting Discrete Traits in Evolving
     - This can be found at the following URL: https://www.evolution.reading.ac.uk/BayesTraitsV5.0.1/BayesTraitsV5.0.1.html
 - 250 Gigabytes of extra storage space on the device you run the simulation on (for the full simulation performed by the authors, but this number drops with fewer additional runs).
 
-These scripts were run using the HPC research cluster at Montana State University known as Tempest. Using the settings found in 'Discrete_Simulation.sh', the code will download any required R packages, run the full simulation, and summarize the results in a specified file. 
+These scripts were run using the HPC research cluster at Montana State University known as Tempest. Using the settings found in 'Discrete_Simulation.sh', the code will download any required R packages, run the full simulation, and summarize the results in a specified file.
 More information on the Tempest research cluster can be found at https://www.montana.edu/uit/rci/tempest/
 
 ## Instructions
 
 To repeat the study, download all scripts into a folder on the computer which is to hold and run the simulation. Next, put all R scripts into a subdirectory called "Scripts" within this main folder. Make sure to add the BayesTraitsV5 executable into this main folder (See "File Organization" below for more detail).
 Next, open the command line of your computer and navigate to the folder containing these scripts. Then run 'Discrete_Simulation.sh' using a line that should look like "bash Discrete_Simulation.sh"
-Alternatively, you can run each R script individually, but they are written to run in the order that they are found in the shell script. 
+Alternatively, you can run each R script individually, but they are written to run in the order that they are found in the shell script.
 This took two weeks to run using the research cluster at Montana State University using the full settings described below, but may take longer on a less powerful machine.
 
 ## Settings
@@ -251,7 +251,7 @@ The first R script, "SetupDirectories.*.R", will set up the necessary filing sys
 
 - Random/
     - This folder will contain all input and output files for the trials which used data that had been randomly simulated.
-    - It will match the structure and contents of the "ER.L" file described above within the "ConstantRates" folder. 
+    - It will match the structure and contents of the "ER.L" file described above within the "ConstantRates" folder.
 
 - (VariableRates/)
     - If the variable_rates setting is "true", then this folder will be created to hold all of the files relevant for those trials
@@ -297,7 +297,7 @@ When you return to the main directory at the end of the simulation, you will fin
 
 If you notice that the simulation has failed, this was most likely due to a lack of variation in the simulated data of a particular iteration. BayesTraits needs to see a variation in the trait for which it is predicting (Trait B); otherwise, it will fail to run. Here are steps to fix that issue.
 
-First, you can check the Results folder, and look under the nXX columns. These will show which trials are missing the required variation. This is most common in simulations with small trees, especially when paired with low rates of evolution. Other options include checking the most recently recreated log files from BayesTraits, which will most likely be the trial that failed, and finding where the Beta Binomial method predicted a perfect 0 or a 1, which also occurs with no trait variation. 
+First, you can check the Results folder, and look under the nXX columns. These will show which trials are missing the required variation. This is most common in simulations with small trees, especially when paired with low rates of evolution. Other options include checking the most recently recreated log files from BayesTraits, which will most likely be the trial that failed, and finding where the Beta Binomial method predicted a perfect 0 or a 1, which also occurs with no trait variation.
 
 Once the problematic trial(s) has been found, you can...
 - Edit the 'predict_data' and 'edited_data' files to add the necessary variation to allow BayesTraits can run. If you do this, rerun the Beta Binomial and Naive Bayes predictions with this new data.
