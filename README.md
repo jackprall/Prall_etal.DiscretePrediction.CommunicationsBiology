@@ -61,7 +61,7 @@ This repository contains R scripts and other supplementary files, such as Excel 
         - This script removes any additional files created in the middle of the simulation to decrease the storage costs of the simulation long term
         - It removes instruction, schedule, model, and particular data files which are only used as inputs for BayesTraits
 
-- codes_scripts_outputs_stochastic_mapping
+- 2_codes_scripts_others_stochastic_mapping
 
 	- 00_archive
 		- 
