@@ -50,6 +50,7 @@ result <- result |>
   ) |>
   dplyr::arrange(scenario, method, log_loss)
 
+# Check for missing log loss values. ----
 mosaic::favstats(log_loss ~ method, data = result)
 #>             method     min      Q1  median      Q3      max      mean        sd
 #> 1  Beta-\nBinomial 0.01511 0.31334 0.57270 0.79851  3.38139 0.6265445 0.4323811
