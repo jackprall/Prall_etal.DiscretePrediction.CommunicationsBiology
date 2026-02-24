@@ -6,7 +6,7 @@ This repository contains R scripts and other supplementary files, such as Excel 
 
 - 1_codes_scripts_main_analyses
 
-	- Readme1.md
+	- README.md
 		- This file is a manual describing the analysis workflow involving the scripts below.
 
     - Discrete_Simulation.*.sh
@@ -64,23 +64,13 @@ This repository contains R scripts and other supplementary files, such as Excel 
         - This script removes any additional files created in the middle of the simulation to decrease the storage costs of the simulation long term.
         - It removes instruction, schedule, model, and particular data files which are only used as inputs for BayesTraits.
 
-- 2_codes_scripts_etc_stochastic_mapping
+- 2_codes_scripts_etc_supplementary_analyses
 
-	- 01_scripts
-		- This folder contains batch and R scripts for predicting discrete traits using the stochastic mapping method implemented in the R package `phytools`.
-
-	- 02_inputs
-		- This folder contains the tree and trait dataset (training and test) files for the predictions mentioned above.
-
-	- 03_outputs
-		- This folder contains output files from the stochastic mapping method above.
-
-	- 04_extension
-		- This folder contains files related to simulation analyses in which we fitted the phylogenetic continuous-time Markov chain (phylo-CTMC) to the training dataset using the algorithm implemented in the program `BayesTraits`, and generated the posterior predictive distribution for the test set using stochastic mapping in the R package `phytools`.
+	- This folder contains files related to analyses in the Supplementary Information.
 
 - 3_codes_scripts_etc_figures
 
-	- This folder contains files related to generating all figures in the manuscript and supplementary information.
+	- This folder contains files related to generating all figures in the manuscript and Supplementary Information.
 
 - 4_results_excel
 
