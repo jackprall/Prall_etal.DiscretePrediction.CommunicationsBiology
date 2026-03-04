@@ -1,0 +1,11 @@
+3
+2
+Pis none
+RevJumpHP exp 0 5
+LogFile tutorial_bayestraits_output_log_save
+SaveModels tutorial_bayestraits_output_model.bin
+Iterations 1100000
+Burnin 100000
+Sample 1000
+Schedule
+Run

@@ -5,7 +5,7 @@
 bayestraits <- function (data=NULL, tree=NULL, commands=NULL, silent=TRUE, remove_files=TRUE, dirname=NULL, loadPath=NULL) {
   
   original<- getwd()
-  #print(original)
+  print(original)
   new_wd<- paste0(original, "/", dirname)
   dir.create(new_wd)
   setwd(new_wd)

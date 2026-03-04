@@ -8,7 +8,7 @@
 # function 'add.taxonomy' requires an input dataframe with species name in column 'binomial'
 # output is a dataframe with standardized species names found by rotl in column 'binomial_rotl'
 # and higher taxonomy in columns 'genus', 'family', 'order', and 'class'
-# spits out warnings about non-unique column names when making temp3
+# outputs warnings about non-unique column names when making temp3
 # ^ these are not a problem! disregard
 
 add_taxonomy<- function(df){  # this function does not work if there are duplicated binomials that rotl can't id

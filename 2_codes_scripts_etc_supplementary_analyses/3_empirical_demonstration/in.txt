@@ -1,0 +1,11 @@
+3
+2
+iterations 3500000
+sample 1000
+burnin 500000
+lm birds_nest_coparent_depRJ.bin
+logfile birds_nest_coparent_depRJ_PredHaast
+ScaleTrees
+#RJHP exp 0 2
+#stones 100 10000
+run

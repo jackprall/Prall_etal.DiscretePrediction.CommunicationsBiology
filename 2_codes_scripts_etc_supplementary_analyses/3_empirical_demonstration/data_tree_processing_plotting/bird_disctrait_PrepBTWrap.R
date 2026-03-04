@@ -1,4 +1,4 @@
-# Prall et al. 2025
+# Prall et al. 2026
 # Below script 1) predicts nesting behavior in dodos and 2) tests accuracy of behavior predictions in extant birds
 # eubirds nesting behavior data from Storchova and Horak 2017
 # Timetree.org topology, february 2025
@@ -141,13 +141,13 @@ original<- original_dodo
 setwd(original)
 
 # bayestraits settings
-iter<- "iterations 11000000"
-burnin<- "burnin 1000000"
+iter<- "iterations 5500000"
+burnin<- "burnin 500000"
 commands_list<- list(
   #c("2", "2", iter, "sample 1000", burnin, "PriorAll exp 100"), # ind
   #c("3", "2", iter, "sample 1000", burnin, "PriorAll exp 100"), #dep
-  c("2", "2", iter, "sample 1000", burnin, "RJHP exp 0 5"), #indRJ
-  c("3", "2", iter, "sample 1000", burnin, "RJHP exp 0 5") #depRJ
+  c("2", "2", iter, "sample 3000", burnin, "RJHP exp 0 5"), #indRJ
+  c("3", "2", iter, "sample 3000", burnin, "RJHP exp 0 5") #depRJ
 )
 
 run_names<- names(commands_list)<- paste0("eubird_nest_dodo", "_", c(#"ind", "dep", # omitted non-RJ runs for inferior performance
@@ -196,8 +196,8 @@ burnin<- "burnin 100000"
 commands_list<- list(
   #c("2", "2", iter, "sample 1000", burnin, "PriorAll exp 100"), # ind
   #c("3", "2", iter, "sample 1000", burnin, "PriorAll exp 100"), #dep
-  c("2", "2", iter, "sample 1000", burnin, "RJHP exp 0 5"), #indRJ
-  c("3", "2", iter, "sample 1000", burnin, "RJHP exp 0 5") #depRJ
+  c("2", "2", iter, "sample 3000", burnin, "RJHP exp 0 5"), #indRJ
+  c("3", "2", iter, "sample 3000", burnin, "RJHP exp 0 5") #depRJ
 )
 
 run_names<- names(commands_list)<- paste0("eubird_nest", "_", c(#"ind", "dep", 
@@ -205,7 +205,7 @@ run_names<- names(commands_list)<- paste0("eubird_nest", "_", c(#"ind", "dep",
   "depRJ"))
 
 # randomly sample from topology 
-nsamples<- 5
+nsamples<- 10
 tip_list<- sample(419, size=nsamples)
 samples_out<- list()
 
