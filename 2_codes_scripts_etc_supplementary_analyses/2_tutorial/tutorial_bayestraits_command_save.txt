@@ -1,7 +1,7 @@
 3
 2
 Pis none
-RevJumpHP exp 0 5
+RevJumpHP exp 0 1
 LogFile tutorial_bayestraits_output_log_save
 SaveModels tutorial_bayestraits_output_model.bin
 Iterations 1100000

@@ -1,7 +1,7 @@
 3
 2
 Pis none
-HyperPriorAll exp 0 5
+HyperPriorAll exp 0 1
 LogFile tutorial_bayestraits_output_log_load
 LoadModels tutorial_bayestraits_output_model.bin
 Iterations 1100000

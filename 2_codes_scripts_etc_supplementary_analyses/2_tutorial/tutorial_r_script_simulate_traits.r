@@ -42,12 +42,12 @@ x <- as.numeric(substr(x = traits_temp$states, start = 1, stop = 1))
 y <- as.numeric(substr(x = traits_temp$states, start = 2, stop = 2))
 traits <- data.frame(
   tip = tree$tip.label,
-  y = y,
-  x = x
+  x = x,
+  y = y
 )
 head(traits)
-#>    tip y x
-#> 1   t1 1 0
+#>    tip x y
+#> 1   t1 0 1
 #> 2  t10 0 0
 #> 3 t100 1 1
 #> 4 t101 1 1

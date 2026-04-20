@@ -14,7 +14,7 @@ test_tip <- "t100"
 
 # Load and prepare the trait dataset. ----
 traits <- readr::read_tsv(file = "tutorial_traits.tsv", col_names = FALSE)
-colnames(traits) <- c("tip", "Y", "X")
+colnames(traits) <- c("tip", "X", "Y")
 traits <- traits |>
     dplyr::select(tip, X, Y) |>
     dplyr::mutate(set = ifelse(tip == test_tip, "test", "training")) |>
