@@ -4,7 +4,7 @@ This repository contains R scripts and other supplementary files, such as Excel 
 
 ## Contents
 
-- 1_codes_scripts_main_analyses
+- 1.CodesScripts.MainAnalyses
 
 	- README.md
 		- This file is a manual describing the analysis workflow involving the scripts below.
@@ -64,14 +64,14 @@ This repository contains R scripts and other supplementary files, such as Excel 
         - This script removes any additional files created in the middle of the simulation to decrease the storage costs of the simulation long term.
         - It removes instruction, schedule, model, and particular data files which are only used as inputs for BayesTraits.
 
-- 2_codes_scripts_etc_supplementary_analyses
+- 2.CodesScriptsEtc.SupplementaryAnalyses
 
 	- This folder contains files related to analyses in the Supplementary Information.
 
-- 3_codes_scripts_etc_figures
-
-	- This folder contains files related to generating all figures in the manuscript and Supplementary Information.
-
-- 4_results_excel
+- 3.Results.ExcelFiles
 
 	- This folder contains Excel result files: those that detail the results for each simulation trial and those that summarize comparisons of interest.
+
+- 4.Figures
+
+	- This folder contains files related to generating all figures in the manuscript and Supplementary Information.
