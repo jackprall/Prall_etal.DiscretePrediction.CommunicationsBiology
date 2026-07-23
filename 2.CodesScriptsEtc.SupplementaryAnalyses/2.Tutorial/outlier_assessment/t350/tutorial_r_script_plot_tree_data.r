@@ -10,7 +10,7 @@ library(tidyverse)
 tree <- ape::read.nexus(file = "tutorial_tree.nex")
 
 # Specify the test tip. ----
-test_tip <- "t100"
+test_tip <- "t350"
 
 # Load and prepare the trait dataset. ----
 traits <- readr::read_tsv(file = "tutorial_traits.tsv", col_names = FALSE)

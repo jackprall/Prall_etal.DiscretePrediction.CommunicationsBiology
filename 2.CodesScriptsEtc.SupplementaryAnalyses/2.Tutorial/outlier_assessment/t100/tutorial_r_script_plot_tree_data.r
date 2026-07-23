@@ -13,7 +13,10 @@ tree <- ape::read.nexus(file = "tutorial_tree.nex")
 test_tip <- "t100"
 
 # Load and prepare the trait dataset. ----
-traits <- readr::read_tsv(file = "tutorial_traits.tsv", col_names = FALSE)
+traits <- readr::read_tsv(
+  file = "tutorial_edited_traits.tsv",
+  col_names = FALSE
+)
 colnames(traits) <- c("tip", "X", "Y")
 traits <- traits |>
   dplyr::select(tip, X, Y) |>

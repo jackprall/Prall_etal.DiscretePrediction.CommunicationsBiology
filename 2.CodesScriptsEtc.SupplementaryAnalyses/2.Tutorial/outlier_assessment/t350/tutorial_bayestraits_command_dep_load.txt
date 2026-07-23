@@ -1,0 +1,11 @@
+3
+2
+Pis none
+HyperPriorAll exp 0 1
+LogFile tutorial_bayestraits_output_log_dep_load
+LoadModels tutorial_bayestraits_output_model_dep.bin
+Iterations 5000000
+Burnin 1000000
+Sample 1000
+Schedule
+Run
